@@ -114,21 +114,23 @@ namespace Backend
             // ----------------------------
             // Seed Database
             // ----------------------------
-            using (var scope = app.Services.CreateScope())
+            if (app.Environment.IsDevelopment())
             {
-                var services = scope.ServiceProvider;
-                try
+                using (var scope = app.Services.CreateScope())
                 {
-                    var seeder = services.GetRequiredService<Seeder>();
-                    await seeder.SeedAsync();
-                }
-                catch (Exception ex)
-                {
-                    var logger = services.GetRequiredService<ILogger<Program>>();
-                    logger.LogError(ex, "An error occurred while seeding the database.");
+                    var services = scope.ServiceProvider;
+                    try
+                    {
+                        var seeder = services.GetRequiredService<Seeder>();
+                        await seeder.SeedAsync();
+                    }
+                    catch (Exception ex)
+                    {
+                        var logger = services.GetRequiredService<ILogger<Program>>();
+                        logger.LogError(ex, "An error occurred while seeding the database.");
+                    }
                 }
             }
-
             // ----------------------------
             // Middleware Pipeline
             // ----------------------------
