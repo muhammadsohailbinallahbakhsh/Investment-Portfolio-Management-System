@@ -96,7 +96,6 @@ namespace Backend.Helpers
             }
             catch (Exception ex)
             {
-                // Log the exception in production for debugging
                 Console.WriteLine($"Token validation failed: {ex.Message}");
                 return null;
             }

@@ -1,8 +1,5 @@
 ﻿namespace Backend.DTOs.Admin
 {
-    /// <summary>
-    /// Detailed user information for admin user management
-    /// </summary>
     public class UserManagementDto
     {
         public string Id { get; set; } = string.Empty;

@@ -1,5 +1,4 @@
-﻿// Services/Implementations/AdminService.cs
-using Backend.DTOs.Admin;
+﻿using Backend.DTOs.Admin;
 using Backend.Models;
 using Backend.Repositories.Interfaces;
 using Backend.Services.Interfaces;
@@ -96,7 +95,7 @@ namespace Backend.Services.Implementations
                 TotalTransactions = totalTransactions,
                 NewUsersThisWeek = newUsersThisWeek,
                 NewUsersThisMonth = newUsersThisMonth,
-                InvestmentGrowthPercentage = 0 // Can be calculated based on historical data
+                InvestmentGrowthPercentage = 0 
             };
         }
 

@@ -1,5 +1,4 @@
-﻿// Controllers/AdminController.cs
-using Backend.DTOs.Admin;
+﻿using Backend.DTOs.Admin;
 using Backend.DTOs.Common;
 using Backend.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;

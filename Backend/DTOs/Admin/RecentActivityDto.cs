@@ -1,8 +1,5 @@
 ﻿namespace Backend.DTOs.Admin
 {
-    /// <summary>
-    /// Recent activity log entry for dashboard
-    /// </summary>
     public class RecentActivityDto
     {
         public int Id { get; set; }

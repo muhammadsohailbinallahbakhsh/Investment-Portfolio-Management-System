@@ -1,9 +1,5 @@
 ﻿namespace Backend.DTOs.Admin
 {
-
-    /// <summary>
-    /// User summary for dashboard recent users list
-    /// </summary>
     public class UserSummaryDto
     {
         public string Id { get; set; } = string.Empty;

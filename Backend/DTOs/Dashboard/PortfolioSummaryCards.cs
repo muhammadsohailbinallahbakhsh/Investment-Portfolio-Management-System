@@ -12,7 +12,6 @@
         public InvestmentPerformanceCard? BestPerforming { get; set; }
         public InvestmentPerformanceCard? WorstPerforming { get; set; }
 
-        // Additional useful metrics
         public int TotalTransactions { get; set; }
         public DateTime? LastTransactionDate { get; set; }
         public int PortfolioCount { get; set; }

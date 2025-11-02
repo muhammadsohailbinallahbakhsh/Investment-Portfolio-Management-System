@@ -2,9 +2,9 @@
 {
     public class UserSearchDto
     {
-        public string? SearchTerm { get; set; } // Search by name or email
-        public bool? IsActive { get; set; } // Filter by active status
-        public string? Role { get; set; } // Filter by role
+        public string? SearchTerm { get; set; } 
+        public bool? IsActive { get; set; } 
+        public string? Role { get; set; } 
         public DateTime? RegisteredAfter { get; set; }
         public DateTime? RegisteredBefore { get; set; }
         public string? SortBy { get; set; } = "CreatedAt"; // CreatedAt, Email, LastName, InvestmentValue

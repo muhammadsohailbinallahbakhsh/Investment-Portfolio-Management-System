@@ -138,7 +138,7 @@ namespace Backend.Data
                     .WithMany()
                     .HasForeignKey(a => a.UserId)
                     .OnDelete(DeleteBehavior.Restrict)
-                    .IsRequired(false); // <— this fixes the issue
+                    .IsRequired(false);
 
                 entity.HasIndex(a => a.UserId);
                 entity.HasIndex(a => a.CreatedAt);

@@ -1,8 +1,5 @@
 ﻿namespace Backend.DTOs.Admin
 {
-    /// <summary>
-    /// Complete admin dashboard data including all statistics and recent activity
-    /// </summary>
     public class AdminDashboardDto
     {
         public SystemStatistics Statistics { get; set; } = new();

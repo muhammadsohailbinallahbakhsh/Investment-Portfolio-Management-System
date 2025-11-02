@@ -1,5 +1,4 @@
-﻿// Controllers/DashboardController.cs
-using Backend.DTOs.Common;
+﻿using Backend.DTOs.Common;
 using Backend.DTOs.Dashboard;
 using Backend.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;

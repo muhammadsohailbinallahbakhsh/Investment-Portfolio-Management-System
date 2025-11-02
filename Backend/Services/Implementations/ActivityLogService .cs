@@ -46,7 +46,7 @@ namespace Backend.Services.Implementations
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Failed to log activity for user {UserId}", userId);
-                // Don't throw - activity logging shouldn't break the main operation
+                // Purposely Didn't throw - activity logging shouldn't break the main operation
             }
         }
 

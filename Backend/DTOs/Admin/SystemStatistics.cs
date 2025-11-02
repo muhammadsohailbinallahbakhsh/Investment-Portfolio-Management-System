@@ -1,9 +1,5 @@
 ﻿namespace Backend.DTOs.Admin
 {
-
-    /// <summary>
-    /// System-wide statistics for dashboard cards
-    /// </summary>
     public class SystemStatistics
     {
         public int TotalUsers { get; set; }
@@ -20,7 +16,6 @@
 
         public int TotalTransactions { get; set; }
 
-        // Growth metrics (optional but impressive)
         public int NewUsersThisWeek { get; set; }
         public int NewUsersThisMonth { get; set; }
         public decimal InvestmentGrowthPercentage { get; set; }
