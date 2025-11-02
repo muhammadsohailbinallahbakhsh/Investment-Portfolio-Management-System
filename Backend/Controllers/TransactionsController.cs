@@ -31,43 +31,34 @@ namespace Backend.Controllers
         }
 
         /// <summary>
-        /// Get all transactions with pagination
+        /// Get transactions with filtering, sorting, and pagination
+        /// Supports: Filter by investment, type, date range; Search by investment name
         /// </summary>
         [HttpGet]
         [ProducesResponseType(typeof(PagedResponse<TransactionDto>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetTransactions(
-            [FromQuery] int page = 1,
-            [FromQuery] int pageSize = 10)
+        public async Task<IActionResult> GetTransactions([FromQuery] TransactionFilterDto filterDto)
         {
             try
             {
                 var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                var isAdmin = User.IsInRole(UserRole.Admin);
+
                 if (string.IsNullOrEmpty(userId))
                     return Unauthorized(ApiResponse.ErrorResponse("User not authenticated"));
 
-                if (page < 1) page = 1;
-                if (pageSize < 1 || pageSize > 100) pageSize = 10;
+                // Validate pagination
+                if (filterDto.Page < 1) filterDto.Page = 1;
+                if (filterDto.PageSize < 1 || filterDto.PageSize > 100) filterDto.PageSize = 10;
 
-                var transactions = await _transactionService.GetAllAsync(page, pageSize);
-                var totalCount = await _transactionService.GetTotalCountAsync();
+                var (transactions, totalCount) = await _transactionService
+                    .GetFilteredTransactionsAsync(userId, filterDto, isAdmin);
 
-                // Filter by user's investments
-                var transactionsList = transactions.ToList();
-                var userTransactions = new List<TransactionDto>();
-
-                foreach (var transaction in transactionsList)
-                {
-                    var investment = await _investmentService.GetByIdAsync(transaction.InvestmentId);
-                    if (investment?.UserId == userId)
-                    {
-                        userTransactions.Add(transaction);
-                    }
-                }
-
-                _logger.LogInformation("User {UserId} retrieved transactions. Page: {Page}", userId, page);
+                _logger.LogInformation(
+                    "User {UserId} retrieved transactions. Page: {Page}, Filters: Investment={Investment}, Type={Type}, Search={Search}",
+                    userId, filterDto.Page, filterDto.InvestmentId, filterDto.Type, filterDto.SearchTerm);
 
                 return Ok(PagedResponse<TransactionDto>.Create(
-                    userTransactions, page, pageSize, userTransactions.Count));
+                    transactions, filterDto.Page, filterDto.PageSize, totalCount));
             }
             catch (Exception ex)
             {
@@ -152,7 +143,7 @@ namespace Backend.Controllers
         }
 
         /// <summary>
-        /// Get recent transactions for current user
+        /// Get recent transactions for current user (for dashboard)
         /// </summary>
         [HttpGet("recent")]
         [ProducesResponseType(typeof(ApiResponse<List<TransactionDto>>), StatusCodes.Status200OK)]
@@ -183,7 +174,88 @@ namespace Backend.Controllers
         }
 
         /// <summary>
+        /// Preview transaction impact before creating
+        /// Shows new total value, validation errors, etc.
+        /// </summary>
+        [HttpPost("preview")]
+        [ProducesResponseType(typeof(ApiResponse<TransactionPreviewResultDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> PreviewTransaction([FromBody] TransactionPreviewDto previewDto)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    var errors = ModelState.Values
+                        .SelectMany(v => v.Errors)
+                        .Select(e => e.ErrorMessage)
+                        .ToList();
+                    return BadRequest(ApiResponse<TransactionPreviewResultDto>.ErrorResponse(
+                        "Validation failed", errors));
+                }
+
+                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (string.IsNullOrEmpty(userId))
+                    return Unauthorized(ApiResponse.ErrorResponse("User not authenticated"));
+
+                var preview = await _transactionService.PreviewTransactionAsync(userId, previewDto);
+
+                _logger.LogInformation(
+                    "User {UserId} previewed {Type} transaction for investment {InvestmentId}",
+                    userId, previewDto.Type, previewDto.InvestmentId);
+
+                return Ok(ApiResponse<TransactionPreviewResultDto>.SuccessResponse(
+                    preview, "Transaction preview calculated successfully"));
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                _logger.LogWarning(ex, "Unauthorized transaction preview attempt");
+                return Forbid();
+            }
+            catch (ArgumentException ex)
+            {
+                _logger.LogWarning(ex, "Invalid transaction preview parameters");
+                return BadRequest(ApiResponse<TransactionPreviewResultDto>.ErrorResponse(ex.Message));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error previewing transaction");
+                return StatusCode(500, ApiResponse<TransactionPreviewResultDto>.ErrorResponse(
+                    "An error occurred while previewing transaction"));
+            }
+        }
+
+        /// <summary>
+        /// Get user's active investments for dropdown selection
+        /// </summary>
+        [HttpGet("investments/dropdown")]
+        [ProducesResponseType(typeof(ApiResponse<List<InvestmentSummaryForDropdownDto>>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetInvestmentsForDropdown()
+        {
+            try
+            {
+                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (string.IsNullOrEmpty(userId))
+                    return Unauthorized(ApiResponse.ErrorResponse("User not authenticated"));
+
+                var investments = await _transactionService.GetUserInvestmentsForDropdownAsync(userId);
+
+                _logger.LogInformation("User {UserId} retrieved investments dropdown list", userId);
+
+                return Ok(ApiResponse<List<InvestmentSummaryForDropdownDto>>.SuccessResponse(
+                    investments, "Investments retrieved successfully"));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving investments for dropdown");
+                return StatusCode(500, ApiResponse<List<InvestmentSummaryForDropdownDto>>.ErrorResponse(
+                    "An error occurred while retrieving investments"));
+            }
+        }
+
+        /// <summary>
         /// Create new transaction
+        /// Validates ownership, transaction type, and updates investment value
         /// </summary>
         [HttpPost]
         [ProducesResponseType(typeof(ApiResponse<TransactionDto>), StatusCodes.Status201Created)]
@@ -221,15 +293,6 @@ namespace Backend.Controllers
                     return BadRequest(ApiResponse<TransactionDto>.ErrorResponse(
                         "Invalid transaction type. Must be: Buy, Sell, or Update"));
 
-                // Additional validation for Sell transactions
-                if (transactionType == TransactionType.Sell)
-                {
-                    var sellAmount = createDto.Quantity * createDto.PricePerUnit;
-                    if (investment.CurrentValue < sellAmount)
-                        return BadRequest(ApiResponse<TransactionDto>.ErrorResponse(
-                            "Cannot sell more than the current investment value"));
-                }
-
                 var transaction = await _transactionService.CreateAsync(userId, createDto);
 
                 // Log activity
@@ -238,7 +301,7 @@ namespace Backend.Controllers
                     ActivityAction.Create,
                     EntityType.Transaction,
                     transaction.Id.ToString(),
-                    $"{createDto.Type} transaction for {investment.Name}: {createDto.Quantity:C}");
+                    $"{createDto.Type} transaction for {investment.Name}: ${createDto.Quantity * createDto.PricePerUnit:N2}");
 
                 _logger.LogInformation(
                     "User {UserId} created {Type} transaction {TransactionId} for investment {InvestmentId}",
@@ -277,13 +340,9 @@ namespace Backend.Controllers
         {
             try
             {
-                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                if (string.IsNullOrEmpty(userId))
-                    return Unauthorized(ApiResponse.ErrorResponse("User not authenticated"));
-
                 var count = await _transactionService.GetTodayCountAsync();
 
-                _logger.LogInformation("User {UserId} retrieved today's transaction count", userId);
+                _logger.LogInformation("Today's transaction count retrieved: {Count}", count);
 
                 return Ok(ApiResponse<int>.SuccessResponse(
                     count, "Today's transaction count retrieved successfully"));
@@ -305,13 +364,9 @@ namespace Backend.Controllers
         {
             try
             {
-                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                if (string.IsNullOrEmpty(userId))
-                    return Unauthorized(ApiResponse.ErrorResponse("User not authenticated"));
-
                 var count = await _transactionService.GetTotalCountAsync();
 
-                _logger.LogInformation("User {UserId} retrieved total transaction count", userId);
+                _logger.LogInformation("Total transaction count retrieved: {Count}", count);
 
                 return Ok(ApiResponse<int>.SuccessResponse(
                     count, "Total transaction count retrieved successfully"));
@@ -319,6 +374,34 @@ namespace Backend.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error retrieving total transaction count");
+                return StatusCode(500, ApiResponse<int>.ErrorResponse(
+                    "An error occurred while retrieving transaction count"));
+            }
+        }
+
+        /// <summary>
+        /// Get user's transaction count
+        /// </summary>
+        [HttpGet("stats/my-count")]
+        [ProducesResponseType(typeof(ApiResponse<int>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetMyTransactionCount()
+        {
+            try
+            {
+                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (string.IsNullOrEmpty(userId))
+                    return Unauthorized(ApiResponse.ErrorResponse("User not authenticated"));
+
+                var count = await _transactionService.GetCountByUserIdAsync(userId);
+
+                _logger.LogInformation("User {UserId} transaction count: {Count}", userId, count);
+
+                return Ok(ApiResponse<int>.SuccessResponse(
+                    count, "Transaction count retrieved successfully"));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving user transaction count");
                 return StatusCode(500, ApiResponse<int>.ErrorResponse(
                     "An error occurred while retrieving transaction count"));
             }

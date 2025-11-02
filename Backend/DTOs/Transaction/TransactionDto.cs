@@ -5,6 +5,7 @@
         public int Id { get; set; }
         public int InvestmentId { get; set; }
         public string InvestmentName { get; set; } = string.Empty;
+        public string InvestmentType { get; set; } = string.Empty; // NEW: For better display
 
         public string Type { get; set; } = string.Empty;
         public decimal Quantity { get; set; }
