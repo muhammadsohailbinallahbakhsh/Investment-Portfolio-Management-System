@@ -1,4 +1,5 @@
 ﻿using Backend.Data;
+using Backend.Helpers;
 using Backend.Models;
 using Backend.Repositories.Implementations;
 using Backend.Repositories.Interfaces;
@@ -39,7 +40,7 @@ namespace Backend
                 options.Password.RequireDigit = true;
                 options.Password.RequireLowercase = true;
                 options.Password.RequireUppercase = true;
-                options.Password.RequireNonAlphanumeric = false; // optional: easier for testing
+                options.Password.RequireNonAlphanumeric = false;
                 options.Password.RequiredLength = 6;
                 options.User.RequireUniqueEmail = true;
             })
@@ -87,13 +88,18 @@ namespace Backend
             });
 
             // ----------------------------
+            // Register Helpers
+            // ----------------------------
+            builder.Services.AddScoped<JwtHelper>();
+
+            // ----------------------------
             // Register Repositories
             // ----------------------------
             builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddScoped<IInvestmentRepository, InvestmentRepository>();
             builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
             builder.Services.AddScoped<IActivityLogRepository, ActivityLogRepository>();
-            builder.Services.AddScoped<IPortfolioRepository, PortfolioRepository>(); // ✅ NEW
+            builder.Services.AddScoped<IPortfolioRepository, PortfolioRepository>();
 
             // ----------------------------
             // Register Services
@@ -102,7 +108,8 @@ namespace Backend
             builder.Services.AddScoped<IUserService, UserService>();
             builder.Services.AddScoped<IInvestmentService, InvestmentService>();
             builder.Services.AddScoped<ITransactionService, TransactionService>();
-            builder.Services.AddScoped<IPortfolioService, PortfolioService>(); // ✅ NEW
+            builder.Services.AddScoped<IPortfolioService, PortfolioService>();
+            builder.Services.AddScoped<IActivityLogService, ActivityLogService>(); // ✅ NEW
 
             // ----------------------------
             // Seeder
@@ -114,23 +121,21 @@ namespace Backend
             // ----------------------------
             // Seed Database
             // ----------------------------
-            if (app.Environment.IsDevelopment())
+            using (var scope = app.Services.CreateScope())
             {
-                using (var scope = app.Services.CreateScope())
+                var services = scope.ServiceProvider;
+                try
                 {
-                    var services = scope.ServiceProvider;
-                    try
-                    {
-                        var seeder = services.GetRequiredService<Seeder>();
-                        await seeder.SeedAsync();
-                    }
-                    catch (Exception ex)
-                    {
-                        var logger = services.GetRequiredService<ILogger<Program>>();
-                        logger.LogError(ex, "An error occurred while seeding the database.");
-                    }
+                    var seeder = services.GetRequiredService<Seeder>();
+                    await seeder.SeedAsync();
+                }
+                catch (Exception ex)
+                {
+                    var logger = services.GetRequiredService<ILogger<Program>>();
+                    logger.LogError(ex, "An error occurred while seeding the database.");
                 }
             }
+
             // ----------------------------
             // Middleware Pipeline
             // ----------------------------
