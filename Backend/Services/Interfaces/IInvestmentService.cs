@@ -23,5 +23,12 @@ namespace Backend.Services.Interfaces
             InvestmentStatus? status,
             DateTime? startDate,
             DateTime? endDate);
+        Task<InvestmentDetailDto?> GetDetailByIdAsync(int id, string userId);
+        Task<(List<InvestmentDto> investments, int totalCount)> GetFilteredInvestmentsAsync(
+            string userId, InvestmentFilterDto filterDto, bool isAdmin = false);
+        Task<bool> BulkDeleteAsync(List<int> investmentIds, string userId, bool isAdmin = false);
+        Task<InvestmentStatsDto> GetUserStatsAsync(string userId);
+        Task<byte[]> ExportInvestmentToCsvAsync(int id, string userId);
+        Task<byte[]> ExportAllToCsvAsync(List<int> investmentIds, string userId);
     }
 }
