@@ -111,7 +111,8 @@ namespace Backend
             builder.Services.AddScoped<IPortfolioService, PortfolioService>();
             builder.Services.AddScoped<IActivityLogService, ActivityLogService>();
             builder.Services.AddScoped<IAdminService, AdminService>();
-            builder.Services.AddScoped<IDashboardService, DashboardService>(); 
+            builder.Services.AddScoped<IDashboardService, DashboardService>();
+            builder.Services.AddScoped<IReportsService, ReportsService>(); 
 
             // ----------------------------
             // Seeder
