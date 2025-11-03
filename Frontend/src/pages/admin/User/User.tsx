@@ -20,7 +20,7 @@ import {
   LogOut,
 } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
-import { CountrySelect } from '@/components';
+// import { CountrySelect } from '@/components';
 
 const roles = ['Admin', 'Editor', 'Viewer'];
 type EmailStatus = 'Verified' | 'Pending' | 'Rejected';
@@ -299,7 +299,8 @@ const UserProfilePage = () => {
           </CardHeader>
           <CardContent className='grid grid-cols-1 md:grid-cols-2 gap-6 pt-2'>
             {isEditingAddress ? (
-              <CountrySelect />
+              // <CountrySelect />
+              <h1>country select</h1>
             ) : (
               <>
                 <div className='flex flex-col gap-2'>

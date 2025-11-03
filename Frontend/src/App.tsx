@@ -1,88 +1,155 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider } from './contexts';
 import SharedLayout from './layout';
+import { UserRole } from './types';
 
 // Admin Pages
-// import {
-//   AdminDashboard,
-//   Users,
-//   UserDetail,
-//   Investments as AdminInvestments,
-//   InvestmentDetail as AdminInvestmentDetail,
-//   Transactions as AdminTransactions,
-//   Reports as AdminReports,
-//   ActivityLog,
-// } from './pages/admin';
+import {
+  Dashboard as AdminDashboard,
+  Users,
+  User as UserDetail,
+  EditUser,
+} from './pages/admin';
 
 // User Pages
-// import {
-//   UserDashboard,
-//   Investments,
-//   InvestmentDetail,
-//   AddInvestment,
-//   EditInvestment,
-//   Transactions,
-//   AddTransaction,
-//   Reports,
-//   Profile,
-// } from './pages/user';
+import {
+  Dashboard as UserDashboard,
+  Investments,
+  InvestmentDetail,
+  AddInvestment,
+  EditInvestment,
+  Transactions,
+  AddTransaction,
+  Reports,
+  UserProfile,
+  Portfolios,
+  PortfolioDetail,
+} from './pages/public';
 
 // Auth Pages
-import { UserLogin, EmailVerification } from './pages/auth';
+import {
+  UserLogin,
+  EmailVerification,
+  UserRegistration,
+  PasswordReset,
+  PasswordResetRequest,
+} from './pages/auth';
 
 // Error Pages
-import { NotFound, Forbidden } from './pages/errors';
+import {
+  NotFound,
+  Forbidden,
+  ProtectedRoute,
+  PublicRoute,
+} from './pages/errors';
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path='/' element={<SharedLayout />}>
-          <Route index element={<h1>Dashboard</h1>} />
-          <Route path='dashboard' element={<h1>Dashboard</h1>} />
-          <Route path='profile' element={<h1>Profile</h1>} />
-
-          <Route path='investments' element={<h1>Investments</h1>} />
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+          {/* Public Auth Routes */}
           <Route
-            path='investments/:investmentId'
-            element={<h1>Investment Detail</h1>}
+            path='/auth/login'
+            element={
+              <PublicRoute>
+                <UserLogin />
+              </PublicRoute>
+            }
           />
-          <Route path='investments/add' element={<h1>Add Investment</h1>} />
           <Route
-            path='investments/:investmentId/edit'
-            element={<h1>Edit Investment</h1>}
+            path='/auth/register'
+            element={
+              <PublicRoute>
+                <UserRegistration />
+              </PublicRoute>
+            }
           />
+          <Route
+            path='/auth/forgot-password'
+            element={
+              <PublicRoute>
+                <PasswordResetRequest />
+              </PublicRoute>
+            }
+          />
+          <Route
+            path='/auth/reset-password'
+            element={
+              <PublicRoute>
+                <PasswordReset />
+              </PublicRoute>
+            }
+          />
+          <Route path='/auth/verify-email' element={<EmailVerification />} />
 
-          <Route path='transactions' element={<h1>Transactions</h1>} />
-          <Route path='transactions/add' element={<h1>Add Transaction</h1>} />
+          {/* Protected Routes - Requires Authentication */}
+          <Route element={<ProtectedRoute requireAuth={true} />}>
+            <Route path='/' element={<SharedLayout />}>
+              {/* Redirect root to dashboard */}
+              <Route index element={<Navigate to='/dashboard' replace />} />
 
-          <Route path='reports' element={<h1>Reports</h1>} />
+              {/* User Dashboard - All authenticated users */}
+              <Route path='dashboard' element={<UserDashboard />} />
+              <Route path='profile' element={<UserProfile />} />
 
-          <Route path='admin'>
-            <Route index element={<h1>Admin Dashboard</h1>} />
-            <Route path='dashboard' element={<h1>Admin Dashboard</h1>} />
-            <Route path='users' element={<h1>Users</h1>} />
-            <Route path='users/:userId' element={<h1>User Detail</h1>} />
-            <Route path='investments' element={<h1>Admin Investments</h1>} />
-            <Route
-              path='investments/:investmentId'
-              element={<h1>Admin Investment Detail</h1>}
-            />
-            <Route path='transactions' element={<h1>Admin Transactions</h1>} />
-            <Route path='reports' element={<h1>Admin Reports</h1>} />
-            <Route path='activity-log' element={<h1>Admin Activity Log</h1>} />
+              {/* Portfolios Management */}
+              <Route path='portfolios' element={<Portfolios />} />
+              <Route
+                path='portfolios/:portfolioId'
+                element={<PortfolioDetail />}
+              />
+
+              {/* Investments Management */}
+              <Route path='investments' element={<Investments />} />
+              <Route path='investments/add' element={<AddInvestment />} />
+              <Route
+                path='investments/:investmentId'
+                element={<InvestmentDetail />}
+              />
+              <Route
+                path='investments/:investmentId/edit'
+                element={<EditInvestment />}
+              />
+
+              {/* Transactions Management */}
+              <Route path='transactions' element={<Transactions />} />
+              <Route path='transactions/add' element={<AddTransaction />} />
+
+              {/* Reports */}
+              <Route path='reports' element={<Reports />} />
+
+              {/* Admin Routes - Only for Admin role */}
+              <Route
+                element={
+                  <ProtectedRoute
+                    requireAuth={true}
+                    allowedRoles={[UserRole.Admin]}
+                  />
+                }
+              >
+                <Route path='admin'>
+                  <Route
+                    index
+                    element={<Navigate to='/admin/dashboard' replace />}
+                  />
+                  <Route path='dashboard' element={<AdminDashboard />} />
+                  <Route path='users' element={<Users />} />
+                  <Route path='users/:userId' element={<UserDetail />} />
+                  <Route path='users/:userId/edit' element={<EditUser />} />
+                </Route>
+              </Route>
+
+              {/* Forbidden Page */}
+              <Route path='forbidden' element={<Forbidden />} />
+            </Route>
           </Route>
 
-          <Route path='forbidden' element={<Forbidden />} />
-        </Route>
-
-        <Route path='auth/login' element={<UserLogin />} />
-        <Route path='auth/register' element={<UserLogin />} />
-        <Route path='auth/forgot-password' element={<UserLogin />} />
-        <Route path='auth/verify-email' element={<EmailVerification />} />
-
-        <Route path='*' element={<NotFound />} />
-      </Routes>
-    </BrowserRouter>
+          {/* 404 Not Found */}
+          <Route path='*' element={<NotFound />} />
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
 

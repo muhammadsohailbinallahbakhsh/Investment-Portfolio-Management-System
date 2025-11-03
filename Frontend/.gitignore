@@ -22,3 +22,12 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+Investment-Portfolio-Management-System.txt
+CompleteBackEndCodeAndFolderStructure.txt
+CompleteFrontEndCodeAndFolderStructure.txt
+ROUTING_DIAGRAM.md
+ROUTING.md
+STEP2_COMPLETE.md
+
+.env

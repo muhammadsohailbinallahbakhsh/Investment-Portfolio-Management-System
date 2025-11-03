@@ -1,28 +1,39 @@
-// components/ProtectedRoute.tsx
-import { Navigate, Outlet, useLocation } from 'react-router';
+import { Navigate, Outlet, useLocation } from 'react-router-dom';
+import { useAuth } from '@/contexts';
+import { UserRole } from '@/types';
 
-// Dummy auth hook or props — replace with your real auth logic
-const useAuth = () => {
-  const user = JSON.parse(localStorage.getItem('user') || 'null');
-  return {
-    isAuthenticated: !!user,
-    isAdmin: user?.role === 'admin',
-  };
-};
+interface ProtectedRouteProps {
+  allowedRoles?: UserRole[];
+  requireAuth?: boolean;
+}
 
-const ProtectedRoute = () => {
-  const { isAuthenticated, isAdmin } = useAuth();
+const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
+  allowedRoles,
+  requireAuth = true,
+}) => {
+  const { user, isAuthenticated, isLoading } = useAuth();
   const location = useLocation();
 
-  if (!isAuthenticated) {
-    return <Navigate to='/auth/admin' replace state={{ from: location }} />;
+  // Show loading state while checking authentication
+  if (isLoading) {
+    return (
+      <div className='flex items-center justify-center min-h-screen'>
+        <div className='text-lg'>Loading...</div>
+      </div>
+    );
   }
 
-  if (!isAdmin) {
+  // Check if user needs to be authenticated
+  if (requireAuth && !isAuthenticated) {
+    return <Navigate to='/auth/login' replace state={{ from: location }} />;
+  }
+
+  // Check if user has required role
+  if (allowedRoles && user && !allowedRoles.includes(user.role)) {
     return <Navigate to='/forbidden' replace />;
   }
 
-  return <Outlet />; // continue to nested routes
+  return <Outlet />;
 };
 
 export default ProtectedRoute;

@@ -1,4 +1,6 @@
-﻿public class InvestmentStatsDto
+﻿using Backend.DTOs.Investment;
+
+public class InvestmentStatsDto
 {
     public int TotalInvestments { get; set; }
     public decimal TotalInvested { get; set; }
