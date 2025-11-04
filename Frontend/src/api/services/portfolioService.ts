@@ -15,23 +15,34 @@ import type {
 
 export const portfolioService = {
   /**
-   * Get all portfolios for the current user with pagination
+   * Get all portfolios for the current user
+   * Backend returns ApiResponse<List<PortfolioDto>> (not paginated)
    */
   getAll: async (pageNumber = 1, pageSize = 10) => {
-    const response = await axiosInstance.get<
-      ApiResponse<PaginatedResponse<Portfolio>>
-    >('/api/portfolios', {
-      params: { pageNumber, pageSize },
-    });
-    return response.data;
+    const response = await axiosInstance.get<ApiResponse<Portfolio[]>>(
+      '/api/portfolios'
+    );
+    // Transform to paginated response for consistency with other services
+    const items = response.data.data || [];
+    return {
+      ...response.data,
+      data: {
+        items,
+        totalCount: items.length,
+        pageNumber: 1,
+        pageSize: items.length,
+        totalPages: 1,
+      },
+    } as ApiResponse<PaginatedResponse<Portfolio>>;
   },
 
   /**
-   * Get a single portfolio by ID with full details
+   * Get a single portfolio by ID with full details (investments and metrics)
+   * Uses /detail endpoint from backend
    */
   getById: async (id: number) => {
     const response = await axiosInstance.get<ApiResponse<PortfolioDetail>>(
-      `/api/portfolios/${id}`
+      `/api/portfolios/${id}/detail`
     );
     return response.data;
   },
