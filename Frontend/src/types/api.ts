@@ -311,53 +311,137 @@ export interface AdminDashboardStats {
 // ============================================
 
 export interface ReportDateRange {
-  startDate: string;
-  endDate: string;
+  startDate?: string;
+  endDate?: string;
+  presetRange?: string;
 }
 
 export interface PerformanceSummaryReport {
+  reportTitle: string;
+  generatedAt: string;
+  periodStart: string;
+  periodEnd: string;
+
+  // Overall Performance
   totalInvested: number;
   currentValue: number;
   totalGainLoss: number;
   totalGainLossPercentage: number;
-  numberOfInvestments: number;
-  numberOfPortfolios: number;
-  bestPerformingInvestment?: TopInvestmentItem;
-  worstPerformingInvestment?: TopInvestmentItem;
-  investmentsByType: DistributionItem[];
-  performanceOverTime: PerformanceDataPoint[];
-}
 
-export interface InvestmentDistributionReport {
-  byType: DistributionItem[];
-  byPortfolio: DistributionItem[];
-  byStatus: DistributionItem[];
-  topInvestments: TopInvestmentItem[];
-}
+  // Investment Breakdown
+  totalInvestments: number;
+  activeInvestments: number;
+  soldInvestments: number;
+  onHoldInvestments: number;
 
-export interface TransactionHistoryReport {
+  // Transaction Summary
   totalTransactions: number;
-  totalBuyAmount: number;
-  totalSellAmount: number;
-  transactionsByType: TransactionsByTypeItem[];
-  transactionsByMonth: TransactionsByMonthItem[];
-  recentTransactions: TransactionDetailItem[];
+  totalBuyVolume: number;
+  totalSellVolume: number;
+
+  // Top Performers
+  topPerformers: TopPerformerItem[];
+  worstPerformers: TopPerformerItem[];
+
+  // Performance by Type
+  performanceByType: PerformanceByTypeItem[];
+
+  // Monthly Trend
+  monthlyTrend: MonthlyTrendItem[];
 }
 
-export interface DistributionItem {
-  name: string;
-  value: number;
-  percentage: number;
-  count?: number;
-}
-
-export interface TopInvestmentItem {
-  id: number;
+export interface TopPerformerItem {
   name: string;
   type: string;
+  initialAmount: number;
   currentValue: number;
   gainLoss: number;
   gainLossPercentage: number;
+}
+
+export interface PerformanceByTypeItem {
+  type: string;
+  count: number;
+  totalInvested: number;
+  currentValue: number;
+  gainLoss: number;
+  gainLossPercentage: number;
+}
+
+export interface MonthlyTrendItem {
+  month: string;
+  value: number;
+  investedAmount: number;
+  gainLoss: number;
+  gainLossPercentage: number;
+}
+
+export interface InvestmentDistributionReport {
+  reportTitle: string;
+  generatedAt: string;
+  totalPortfolioValue: number;
+  totalInvestments: number;
+  distributionByType: DistributionItem[];
+  distributionByStatus: DistributionItem[];
+  investmentSizeDistribution: InvestmentSizeRange[];
+  investments: InvestmentDetailItem[];
+}
+
+export interface InvestmentSizeRange {
+  range: string;
+  count: number;
+  totalValue: number;
+}
+
+export interface InvestmentDetailItem {
+  name: string;
+  type: string;
+  status: string;
+  initialAmount: number;
+  currentValue: number;
+  gainLoss: number;
+  gainLossPercentage: number;
+  purchaseDate: string;
+}
+
+export interface TransactionHistoryReport {
+  reportTitle: string;
+  generatedAt: string;
+  periodStart: string;
+  periodEnd: string;
+  totalTransactions: number;
+  totalVolume: number;
+  buyTransactions: number;
+  buyVolume: number;
+  sellTransactions: number;
+  sellVolume: number;
+  updateTransactions: number;
+  transactionsByType: TransactionsByTypeItem[];
+  transactionsByMonth: TransactionsByMonthItem[];
+  transactions: TransactionDetailItem[];
+}
+
+export interface DistributionItem {
+  category: string;
+  count: number;
+  value: number;
+  percentage: number;
+  color: string;
+}
+
+export interface TopInvestmentItem {
+  id?: number;
+  rank: number;
+  name: string;
+  type: string;
+  status: string;
+  initialAmount: number;
+  currentValue: number;
+  gainLoss: number;
+  gainLossPercentage: number;
+  purchaseDate: string;
+  daysHeld: number;
+  annualizedReturn: number;
 }
 
 export interface PerformanceDataPoint {
@@ -375,29 +459,83 @@ export interface ChartDataPoint {
 export interface TransactionsByTypeItem {
   type: string;
   count: number;
-  totalAmount: number;
+  volume: number;
+  percentage: number;
 }
 
 export interface TransactionsByMonthItem {
   month: string;
-  buyCount: number;
-  sellCount: number;
-  buyAmount: number;
-  sellAmount: number;
+  count: number;
+  volume: number;
 }
 
 export interface TransactionDetailItem {
-  id: number;
-  investmentName: string;
-  type: string;
-  amount: number;
   date: string;
+  investmentName: string;
+  investmentType: string;
+  transactionType: string;
+  quantity: number;
+  pricePerUnit: number;
+  amount: number;
+  notes?: string;
 }
 
 export interface ExportReportRequest {
   reportType: string;
   format: 'pdf' | 'excel' | 'csv';
   dateRange?: ReportDateRange;
+}
+
+export interface YearOverYearReport {
+  reportTitle: string;
+  generatedAt: string;
+  yearsCovered: number[];
+  yearlySummaries: YearSummaryItem[];
+  yearOverYearGrowth: YearOverYearGrowthItem[];
+  bestYear?: YearSummaryItem;
+  worstYear?: YearSummaryItem;
+  chartLabels: string[];
+  chartEndingValues: number[];
+  chartGrowthPercentages: number[];
+}
+
+export interface YearSummaryItem {
+  year: number;
+  startingValue: number;
+  endingValue: number;
+  totalInvested: number;
+  growth: number;
+  growthPercentage: number;
+  totalTransactions: number;
+  transactionVolume: number;
+  newInvestments: number;
+}
+
+export interface YearOverYearGrowthItem {
+  comparison: string; // "2024 vs 2023"
+  growthDifference: number;
+  growthDifferencePercentage: number;
+  transactionCountDifference: number;
+}
+
+export interface TopPerformingInvestmentsReport {
+  reportTitle: string;
+  generatedAt: string;
+  periodStart: string;
+  periodEnd: string;
+  totalInvestmentsAnalyzed: number;
+  topByPercentage: TopInvestmentItem[];
+  topByAbsoluteGain: TopInvestmentItem[];
+  topByValue: TopInvestmentItem[];
+  typePerformanceSummaries: TypePerformanceSummary[];
+}
+
+export interface TypePerformanceSummary {
+  type: string;
+  count: number;
+  averageGainLossPercentage: number;
+  bestPerformancePercentage: number;
+  worstPerformancePercentage: number;
 }
 
 // ============================================

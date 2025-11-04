@@ -5,6 +5,8 @@ import type {
   PerformanceSummaryReport,
   InvestmentDistributionReport,
   TransactionHistoryReport,
+  YearOverYearReport,
+  TopPerformingInvestmentsReport,
   ExportReportRequest,
 } from '@/types';
 
@@ -71,6 +73,31 @@ export const reportService = {
       '/api/reports/top-performers',
       { params: { limit } }
     );
+    return response.data;
+  },
+
+  /**
+   * Get year-over-year comparison report
+   */
+  getYearOverYearComparison: async () => {
+    const response = await axiosInstance.get<ApiResponse<YearOverYearReport>>(
+      '/api/reports/year-over-year'
+    );
+    return response.data;
+  },
+
+  /**
+   * Get top performing investments report
+   */
+  getTopPerformingInvestments: async (
+    dateRange?: ReportDateRange,
+    count = 10
+  ) => {
+    const response = await axiosInstance.get<
+      ApiResponse<TopPerformingInvestmentsReport>
+    >('/api/reports/top-performing', {
+      params: { ...dateRange, count },
+    });
     return response.data;
   },
 };

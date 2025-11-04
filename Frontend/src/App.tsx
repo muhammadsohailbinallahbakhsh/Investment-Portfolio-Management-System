@@ -21,6 +21,11 @@ import {
   Transactions,
   AddTransaction,
   Reports,
+  PerformanceSummary,
+  InvestmentDistribution,
+  TransactionHistory,
+  YearOverYearComparison,
+  TopPerformingInvestments,
   UserProfile,
   Portfolios,
   PortfolioDetail,
@@ -118,6 +123,26 @@ function App() {
 
               {/* Reports */}
               <Route path='reports' element={<Reports />} />
+              <Route
+                path='reports/performance-summary'
+                element={<PerformanceSummary />}
+              />
+              <Route
+                path='reports/investment-distribution'
+                element={<InvestmentDistribution />}
+              />
+              <Route
+                path='reports/transaction-history'
+                element={<TransactionHistory />}
+              />
+              <Route
+                path='reports/year-over-year'
+                element={<YearOverYearComparison />}
+              />
+              <Route
+                path='reports/top-performing'
+                element={<TopPerformingInvestments />}
+              />
 
               {/* Admin Routes - Only for Admin role */}
               <Route

@@ -14,6 +14,8 @@ import type {
   PerformanceSummaryReport,
   InvestmentDistributionReport,
   TransactionHistoryReport,
+  YearOverYearReport,
+  TopPerformingInvestmentsReport,
   InvestmentFilterParams,
   TransactionFilterParams,
   ActivityLogFilterParams,
@@ -73,6 +75,9 @@ export const queryKeys = {
     ['reports', 'investment-distribution', dateRange] as const,
   transactionHistory: (dateRange?: ReportDateRange) =>
     ['reports', 'transaction-history', dateRange] as const,
+  yearOverYear: ['reports', 'year-over-year'] as const,
+  topPerformingInvestments: (dateRange?: ReportDateRange, count?: number) =>
+    ['reports', 'top-performing', dateRange, count] as const,
   topPerformers: (limit?: number) =>
     ['reports', 'top-performers', limit] as const,
 
@@ -339,6 +344,28 @@ export const useTopPerformers = (
   return useQuery({
     queryKey: queryKeys.topPerformers(limit),
     queryFn: () => reportService.getTopPerformers(limit),
+    ...options,
+  });
+};
+
+export const useYearOverYear = (
+  options?: UseQueryOptions<ApiResponse<YearOverYearReport>>
+) => {
+  return useQuery({
+    queryKey: queryKeys.yearOverYear,
+    queryFn: () => reportService.getYearOverYearComparison(),
+    ...options,
+  });
+};
+
+export const useTopPerformingInvestments = (
+  dateRange?: ReportDateRange,
+  count = 10,
+  options?: UseQueryOptions<ApiResponse<TopPerformingInvestmentsReport>>
+) => {
+  return useQuery({
+    queryKey: queryKeys.topPerformingInvestments(dateRange, count),
+    queryFn: () => reportService.getTopPerformingInvestments(dateRange, count),
     ...options,
   });
 };

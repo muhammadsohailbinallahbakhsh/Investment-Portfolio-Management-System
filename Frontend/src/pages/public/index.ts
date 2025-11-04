@@ -13,3 +13,5 @@ export { default as Reports } from './components/Reports/Reports';
 export { default as PerformanceSummary } from './components/Reports/PerformanceSummary';
 export { default as InvestmentDistribution } from './components/Reports/InvestmentDistribution';
 export { default as TransactionHistory } from './components/Reports/TransactionHistory';
+export { default as YearOverYearComparison } from './components/Reports/YearOverYearComparison';
+export { default as TopPerformingInvestments } from './components/Reports/TopPerformingInvestments';
