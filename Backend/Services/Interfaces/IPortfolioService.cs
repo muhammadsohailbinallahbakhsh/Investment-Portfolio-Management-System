@@ -18,5 +18,6 @@ namespace Backend.Services.Interfaces
         Task<bool> CanDeleteAsync(int id, string userId);
         Task<bool> IsInUseAsync(int id);
         Task<int> GetInvestmentCountAsync(int id);
+        Task<PortfolioDto> GetOrCreateDefaultPortfolioAsync(string userId);
     }
 }

@@ -10,10 +10,14 @@ namespace Backend.Services.Implementations
     public class InvestmentService : IInvestmentService
     {
         private readonly IInvestmentRepository _investmentRepository;
+        private readonly IPortfolioService _portfolioService;
 
-        public InvestmentService(IInvestmentRepository investmentRepository)
+        public InvestmentService(
+            IInvestmentRepository investmentRepository,
+            IPortfolioService portfolioService)
         {
             _investmentRepository = investmentRepository;
+            _portfolioService = portfolioService;
         }
 
         public async Task<InvestmentDto?> GetByIdAsync(int id)
@@ -50,10 +54,21 @@ namespace Backend.Services.Implementations
 
         public async Task<InvestmentDto> CreateAsync(string userId, CreateInvestmentDto createDto)
         {
+            // Ensure portfolio exists, if not use or create default
+            int portfolioId = createDto.PortfolioId;
+            var portfolio = await _portfolioService.GetByIdAsync(portfolioId);
+            
+            if (portfolio == null || portfolio.UserId != userId)
+            {
+                // Get or create default portfolio
+                var defaultPortfolio = await _portfolioService.GetOrCreateDefaultPortfolioAsync(userId);
+                portfolioId = defaultPortfolio.Id;
+            }
+
             var investment = new Investment
             {
                 UserId = userId,
-                PortfolioId = createDto.PortfolioId,
+                PortfolioId = portfolioId,
                 Name = createDto.Name,
                 Type = Enum.Parse<InvestmentType>(createDto.Type, true),
                 InitialAmount = createDto.InitialAmount,

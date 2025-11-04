@@ -65,6 +65,10 @@ namespace Backend.Services.Implementations
             if (portfolio == null || portfolio.UserId != userId)
                 return false;
 
+            // Prevent deletion of default portfolio
+            if (portfolio.IsDefault)
+                return false;
+
             return await _portfolioRepository.SoftDeleteAsync(id);
         }
 
@@ -249,6 +253,7 @@ namespace Backend.Services.Implementations
                     Id = p.Id,
                     Name = p.Name,
                     Description = p.Description,
+                    IsDefault = p.IsDefault,
                     InvestmentCount = investments.Count,
                     TotalValue = investments.Sum(i => i.CurrentValue),
                     CreatedAt = p.CreatedAt
@@ -293,6 +298,29 @@ namespace Backend.Services.Implementations
         // HELPER METHOD
         // ==========================================
 
+        public async Task<PortfolioDto> GetOrCreateDefaultPortfolioAsync(string userId)
+        {
+            var portfolios = await _portfolioRepository.GetByUserIdAsync(userId);
+            var defaultPortfolio = portfolios.FirstOrDefault(p => p.IsDefault && !p.IsDeleted);
+
+            if (defaultPortfolio != null)
+            {
+                return MapToDto(defaultPortfolio);
+            }
+
+            // Create default portfolio
+            var portfolio = new Portfolio
+            {
+                UserId = userId,
+                Name = "Default Portfolio",
+                Description = "Your default investment portfolio",
+                IsDefault = true
+            };
+
+            var created = await _portfolioRepository.CreateAsync(portfolio);
+            return MapToDto(created);
+        }
+
         private static PortfolioDto MapToDto(Portfolio p)
         {
             var investments = p.Investments.Where(i => !i.IsDeleted).ToList();
@@ -303,6 +331,7 @@ namespace Backend.Services.Implementations
                 UserId = p.UserId,
                 Name = p.Name,
                 Description = p.Description,
+                IsDefault = p.IsDefault,
                 TotalInvested = investments.Sum(i => i.InitialAmount),
                 CurrentValue = investments.Sum(i => i.CurrentValue),
                 TotalInvestments = investments.Count,

@@ -299,6 +299,22 @@ namespace Backend.Controllers
                 if (string.IsNullOrEmpty(userId))
                     return Unauthorized(ApiResponse.ErrorResponse("User not authenticated"));
 
+                // Get portfolio to check if it's default
+                var portfolio = await _portfolioService.GetByIdAsync(id);
+                
+                if (portfolio == null || portfolio.UserId != userId)
+                {
+                    return NotFound(ApiResponse.ErrorResponse(
+                        "Portfolio not found or access denied"));
+                }
+
+                // Check if it's a default portfolio
+                if (portfolio.IsDefault)
+                {
+                    return BadRequest(ApiResponse.ErrorResponse(
+                        "Cannot delete default portfolio. Default portfolios are protected from deletion."));
+                }
+
                 // ✅ CRITICAL: Check if portfolio can be deleted (no investments)
                 var canDelete = await _portfolioService.CanDeleteAsync(id, userId);
 
@@ -319,10 +335,7 @@ namespace Backend.Controllers
                     }
                 }
 
-                // Get portfolio name for logging before deletion
-                var portfolio = await _portfolioService.GetByIdAsync(id);
-                var portfolioName = portfolio?.Name ?? "Unknown";
-
+                var portfolioName = portfolio.Name;
                 var result = await _portfolioService.DeleteAsync(id, userId);
 
                 if (!result)

@@ -7,7 +7,7 @@ namespace Backend.Models
     public class Investment
     {
         public int Id { get; set; }
-        public int? PortfolioId { get; set; }           
+        public int PortfolioId { get; set; }           
         public string UserId { get; set; } = string.Empty; 
         public string Name { get; set; } = string.Empty;
 
@@ -40,7 +40,7 @@ namespace Backend.Models
         public byte[]? RowVersion { get; set; } 
 
         public virtual ApplicationUser User { get; set; } = null!;
-        public virtual Portfolio? Portfolio { get; set; }
+        public virtual Portfolio Portfolio { get; set; } = null!;
         public virtual ICollection<Transaction> Transactions { get; set; } = new List<Transaction>();
     }
 }

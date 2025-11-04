@@ -47,10 +47,7 @@ export const queryKeys = {
   investments: (params?: InvestmentFilterParams) =>
     ['investments', params] as const,
   investment: (id: number) => ['investments', id] as const,
-  investmentSummaries: ['investments', 'summaries'] as const,
-  investmentTypes: ['investments', 'types'] as const,
-  investmentsByPortfolio: (portfolioId: number) =>
-    ['investments', 'portfolio', portfolioId] as const,
+  investmentStats: ['investments', 'stats'] as const,
 
   // Transactions
   transactions: (params?: TransactionFilterParams) =>
@@ -152,7 +149,7 @@ export const usePortfolioPerformance = (
 
 export const useInvestments = (
   params?: InvestmentFilterParams,
-  options?: UseQueryOptions<ApiResponse<PaginatedResponse<Investment>>>
+  options?: UseQueryOptions<PaginatedResponse<Investment>>
 ) => {
   return useQuery({
     queryKey: queryKeys.investments(params),
@@ -173,34 +170,12 @@ export const useInvestment = (
   });
 };
 
-export const useInvestmentSummaries = (
-  options?: UseQueryOptions<ApiResponse<InvestmentSummary[]>>
+export const useInvestmentStats = (
+  options?: UseQueryOptions<ApiResponse<any>>
 ) => {
   return useQuery({
-    queryKey: queryKeys.investmentSummaries,
-    queryFn: () => investmentService.getSummaries(),
-    ...options,
-  });
-};
-
-export const useInvestmentTypes = (
-  options?: UseQueryOptions<ApiResponse<string[]>>
-) => {
-  return useQuery({
-    queryKey: queryKeys.investmentTypes,
-    queryFn: () => investmentService.getTypes(),
-    ...options,
-  });
-};
-
-export const useInvestmentsByPortfolio = (
-  portfolioId: number,
-  options?: UseQueryOptions<ApiResponse<Investment[]>>
-) => {
-  return useQuery({
-    queryKey: queryKeys.investmentsByPortfolio(portfolioId),
-    queryFn: () => investmentService.getByPortfolio(portfolioId),
-    enabled: !!portfolioId,
+    queryKey: queryKeys.investmentStats,
+    queryFn: () => investmentService.getStats(),
     ...options,
   });
 };

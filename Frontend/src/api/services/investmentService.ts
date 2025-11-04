@@ -18,20 +18,38 @@ import type {
 export const investmentService = {
   /**
    * Get all investments with optional filters and pagination
+   * Backend expects: Page, PageSize, PortfolioId, Type, Status, SearchTerm, SortBy, SortOrder
+   * Returns PagedResponse<InvestmentDto> directly (not wrapped in ApiResponse)
    */
   getAll: async (params?: InvestmentFilterParams) => {
-    const response = await axiosInstance.get<
-      ApiResponse<PaginatedResponse<Investment>>
-    >('/api/investments', { params });
+    // Map frontend params to backend params (capitalize first letter)
+    const backendParams = params
+      ? {
+          Page: params.pageNumber,
+          PageSize: params.pageSize,
+          PortfolioId: params.portfolioId,
+          Type: params.type,
+          Status: params.status,
+          SearchTerm: params.searchTerm,
+          SortBy: params.sortBy,
+          SortOrder: params.sortOrder,
+        }
+      : undefined;
+
+    const response = await axiosInstance.get<PaginatedResponse<Investment>>(
+      '/api/investments',
+      { params: backendParams }
+    );
     return response.data;
   },
 
   /**
    * Get a single investment by ID with full details
+   * Uses /detail endpoint from backend
    */
   getById: async (id: number) => {
     const response = await axiosInstance.get<ApiResponse<InvestmentDetail>>(
-      `/api/investments/${id}`
+      `/api/investments/${id}/detail`
     );
     return response.data;
   },
@@ -49,11 +67,25 @@ export const investmentService = {
 
   /**
    * Update an existing investment
+   * Backend expects: Name, Type, InitialAmount, Quantity, AveragePricePerUnit, PurchaseDate, BrokerPlatform, Notes, Status
    */
   update: async (id: number, data: UpdateInvestmentRequest) => {
+    // Map frontend data to backend format (PascalCase)
+    const backendData = {
+      Name: data.name,
+      Type: data.type,
+      InitialAmount: data.initialAmount,
+      Quantity: data.quantity,
+      AveragePricePerUnit: data.averagePricePerUnit,
+      PurchaseDate: data.purchaseDate,
+      BrokerPlatform: data.brokerPlatform,
+      Notes: data.notes,
+      Status: data.status,
+    };
+
     const response = await axiosInstance.put<ApiResponse<Investment>>(
       `/api/investments/${id}`,
-      data
+      backendData
     );
     return response.data;
   },
@@ -70,41 +102,22 @@ export const investmentService = {
 
   /**
    * Bulk delete multiple investments
+   * Backend expects { InvestmentIds: number[] }
    */
   bulkDelete: async (data: BulkDeleteRequest) => {
     const response = await axiosInstance.post<ApiResponse>(
       '/api/investments/bulk-delete',
-      data
+      { InvestmentIds: data.ids }
     );
     return response.data;
   },
 
   /**
-   * Get investment summaries for dropdowns
+   * Get user investment statistics
    */
-  getSummaries: async () => {
-    const response = await axiosInstance.get<ApiResponse<InvestmentSummary[]>>(
-      '/api/investments/summaries'
-    );
-    return response.data;
-  },
-
-  /**
-   * Get investments by portfolio ID
-   */
-  getByPortfolio: async (portfolioId: number) => {
-    const response = await axiosInstance.get<ApiResponse<Investment[]>>(
-      `/api/investments/portfolio/${portfolioId}`
-    );
-    return response.data;
-  },
-
-  /**
-   * Get investment types
-   */
-  getTypes: async () => {
-    const response = await axiosInstance.get<ApiResponse<string[]>>(
-      '/api/investments/types'
+  getStats: async () => {
+    const response = await axiosInstance.get<ApiResponse<any>>(
+      '/api/investments/stats'
     );
     return response.data;
   },

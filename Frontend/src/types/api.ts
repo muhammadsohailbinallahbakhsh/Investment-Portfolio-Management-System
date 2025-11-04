@@ -10,11 +10,15 @@ export interface ApiResponse<T = any> {
 }
 
 export interface PaginatedResponse<T> {
-  items: T[];
-  totalCount: number;
-  pageNumber: number;
+  success: boolean;
+  message: string;
+  data: T[];
+  page: number;
   pageSize: number;
+  totalCount: number;
   totalPages: number;
+  hasPrevious: boolean;
+  hasNext: boolean;
 }
 
 export interface PaginationParams {
@@ -99,6 +103,7 @@ export interface Portfolio {
   userId: string;
   name: string;
   description?: string;
+  isDefault: boolean;
   totalInvested: number;
   currentValue: number;
   totalInvestments: number;
@@ -129,6 +134,7 @@ export interface UpdatePortfolioRequest {
 export interface PortfolioSummary {
   id: number;
   name: string;
+  isDefault: boolean;
   totalValue: number;
   totalInvestments: number;
 }
@@ -164,7 +170,7 @@ export interface InvestmentDetail extends Investment {
 }
 
 export interface CreateInvestmentRequest {
-  portfolioId?: number;
+  portfolioId: number;
   name: string;
   type: string;
   initialAmount: number;
@@ -176,14 +182,15 @@ export interface CreateInvestmentRequest {
 }
 
 export interface UpdateInvestmentRequest {
-  portfolioId?: number;
-  name?: string;
-  type?: string;
-  currentValue?: number;
+  name: string;
+  type: string;
+  initialAmount: number;
   quantity?: number;
+  averagePricePerUnit?: number;
+  purchaseDate: string;
   brokerPlatform?: string;
   notes?: string;
-  status?: string;
+  status: string;
 }
 
 export interface InvestmentFilterParams extends PaginationParams {
