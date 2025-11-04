@@ -186,7 +186,7 @@ export const useInvestmentStats = (
 
 export const useTransactions = (
   params?: TransactionFilterParams,
-  options?: UseQueryOptions<ApiResponse<PaginatedResponse<Transaction>>>
+  options?: UseQueryOptions<PaginatedResponse<Transaction>>
 ) => {
   return useQuery({
     queryKey: queryKeys.transactions(params),
@@ -225,6 +225,16 @@ export const useTransactionTypes = (
   return useQuery({
     queryKey: queryKeys.transactionTypes,
     queryFn: () => transactionService.getTypes(),
+    ...options,
+  });
+};
+
+export const useInvestmentSummaries = (
+  options?: UseQueryOptions<ApiResponse<any[]>>
+) => {
+  return useQuery({
+    queryKey: ['investmentSummaries'],
+    queryFn: () => transactionService.getInvestmentsForDropdown(),
     ...options,
   });
 };

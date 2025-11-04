@@ -267,11 +267,16 @@ export interface TransactionPreview {
 }
 
 export interface TransactionPreviewResult {
-  newAveragePrice: number;
-  newTotalQuantity: number;
-  newCurrentValue: number;
-  impactOnGainLoss: number;
-  message: string;
+  investmentName: string;
+  currentValue: number;
+  transactionAmount: number;
+  newTotalValue: number;
+  valueChange: number;
+  valueChangePercentage: number;
+  isValid: boolean;
+  validationMessage?: string;
+  newQuantity?: number;
+  newAveragePricePerUnit?: number;
 }
 
 // ============================================

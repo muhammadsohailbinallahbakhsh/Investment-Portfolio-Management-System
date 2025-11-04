@@ -17,11 +17,29 @@ import type {
 export const transactionService = {
   /**
    * Get all transactions with optional filters and pagination
+   * Backend expects: Page, PageSize, InvestmentId, Type, StartDate, EndDate, SearchTerm, SortBy, SortOrder
+   * Returns PagedResponse<TransactionDto> directly (not wrapped in ApiResponse)
    */
   getAll: async (params?: TransactionFilterParams) => {
-    const response = await axiosInstance.get<
-      ApiResponse<PaginatedResponse<Transaction>>
-    >('/api/transactions', { params });
+    // Map frontend params to backend params (capitalize first letter)
+    const backendParams = params
+      ? {
+          Page: params.pageNumber,
+          PageSize: params.pageSize,
+          InvestmentId: params.investmentId,
+          Type: params.type,
+          StartDate: params.startDate,
+          EndDate: params.endDate,
+          SearchTerm: params.searchTerm,
+          SortBy: params.sortBy,
+          SortOrder: params.sortOrder,
+        }
+      : undefined;
+
+    const response = await axiosInstance.get<PaginatedResponse<Transaction>>(
+      '/api/transactions',
+      { params: backendParams }
+    );
     return response.data;
   },
 
@@ -104,6 +122,16 @@ export const transactionService = {
     const response = await axiosInstance.get<ApiResponse<Transaction[]>>(
       '/api/transactions/recent',
       { params: { limit } }
+    );
+    return response.data;
+  },
+
+  /**
+   * Get user's investments for dropdown selection
+   */
+  getInvestmentsForDropdown: async () => {
+    const response = await axiosInstance.get<ApiResponse<any[]>>(
+      '/api/transactions/investments/dropdown'
     );
     return response.data;
   },
