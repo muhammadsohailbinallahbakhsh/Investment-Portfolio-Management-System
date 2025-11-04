@@ -24,10 +24,11 @@ export const userService = {
 
   /**
    * Update current user profile
+   * Note: Users can only update their own profile
    */
-  updateProfile: async (data: UpdateUserRequest) => {
+  updateProfile: async (userId: string, data: UpdateUserRequest) => {
     const response = await axiosInstance.put<ApiResponse<User>>(
-      '/api/users/profile',
+      `/api/users/${userId}`,
       data
     );
     return response.data;

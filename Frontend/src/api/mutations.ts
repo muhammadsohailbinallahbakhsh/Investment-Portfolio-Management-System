@@ -391,12 +391,15 @@ export const usePreviewTransaction = (
 // ============================================
 
 export const useUpdateProfile = (
-  options?: MutationOptions<ApiResponse<User>, UpdateUserRequest>
+  options?: MutationOptions<
+    ApiResponse<User>,
+    { userId: string; data: UpdateUserRequest }
+  >
 ) => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: userService.updateProfile,
+    mutationFn: ({ userId, data }) => userService.updateProfile(userId, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.userProfile });
       toast.success('Profile updated successfully!');
