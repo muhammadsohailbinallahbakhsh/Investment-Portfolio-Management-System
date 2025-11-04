@@ -378,11 +378,15 @@ FodyWeavers.xsd
 
 
 Frontend/Investment-Portfolio-Management-System.txt
-Frontend/CompleteBackEndCodeAndFolderStructure.txt
-Frontend/CompleteFrontEndCodeAndFolderStructure.txt
+Frontend/CompleteBackEndCodeAndFolderStructure..txt
+Frontend/CompleteFrontEndCodeAndFolderStructure..txt
 Frontend/ROUTING_DIAGRAM.md
 Frontend/ROUTING.md
 Frontend/STEP2_COMPLETE.md
+Frontend/Src/Prompt.md
+Frontend/API_IMPLEMENTATION.md
+Frontend/STEP3_COMPLETE.md
+Frontend/STEP4_API_COMPLETE.md
 
 
 Backend/asppsettings.json

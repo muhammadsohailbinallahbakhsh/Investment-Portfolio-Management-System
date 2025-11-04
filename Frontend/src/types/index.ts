@@ -1,24 +1,94 @@
-import { UserRole } from './enums';
-export { UserRole };
+// Export all enums
+export {
+  UserRole,
+  InvestmentType,
+  InvestmentStatus,
+  TransactionType,
+  ActivityAction,
+  EntityType,
+  ExportFormat,
+  SortOrder,
+} from './enums';
 
-import type { UserSliceType } from './state';
-import type {
+// Export all API types
+export type {
+  // Common
+  ApiResponse,
+  PaginatedResponse,
+  PaginationParams,
+
+  // Auth
+  LoginRequest,
+  RegisterRequest,
+  AuthResponse,
+  ForgotPasswordRequest,
+  ResetPasswordRequest,
+  RefreshTokenRequest,
+
+  // User
+  User,
+  UpdateUserRequest,
+  ChangePasswordRequest,
+
+  // Portfolio
+  Portfolio,
+  PortfolioDetail,
+  CreatePortfolioRequest,
+  UpdatePortfolioRequest,
+  PortfolioSummary,
+
+  // Investment
+  Investment,
+  InvestmentDetail,
+  CreateInvestmentRequest,
+  UpdateInvestmentRequest,
+  InvestmentFilterParams,
+  BulkDeleteRequest,
+  InvestmentSummary,
+
+  // Transaction
+  Transaction,
+  CreateTransactionRequest,
+  UpdateTransactionRequest,
+  TransactionFilterParams,
+  TransactionPreview,
+  TransactionPreviewResult,
+
+  // Dashboard
+  DashboardStats,
+  AdminDashboardStats,
+
+  // Reports
+  ReportDateRange,
+  PerformanceSummaryReport,
+  InvestmentDistributionReport,
+  TransactionHistoryReport,
+  DistributionItem,
+  TopInvestmentItem,
+  PerformanceDataPoint,
+  ChartDataPoint,
+  TransactionsByTypeItem,
+  TransactionsByMonthItem,
+  TransactionDetailItem,
+  ExportReportRequest,
+
+  // Activity Logs
+  ActivityLog,
+  ActivityLogFilterParams,
+
+  // Legacy
+  SignUpRequest,
+  SignUpResponse,
+} from './api';
+
+// Export state types
+export type { UserSliceType } from './state';
+
+// Export component types
+export type {
   SidebarPropsType,
   DashboardStatsType,
   NavLinkType,
   PageHeaderPropsType,
   StatCardPropsType,
 } from './components';
-
-import type { SignUpRequest, SignUpResponse } from './api';
-
-export type {
-  SidebarPropsType,
-  UserSliceType,
-  DashboardStatsType,
-  NavLinkType,
-  PageHeaderPropsType,
-  StatCardPropsType,
-  SignUpRequest,
-  SignUpResponse,
-};

@@ -9,5 +9,6 @@
     "paths": {
       "@/*": ["./src/*"]
     }
-  }
+  },
+  "exclude": ["./src/examples/**", "src/test-utils/**", "src/legacy-file.ts"]
 }

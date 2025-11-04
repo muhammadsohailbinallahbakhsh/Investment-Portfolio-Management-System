@@ -1,11 +1,9 @@
-import { useState, useEffect } from 'react';
-import { useParams } from 'react-router';
-import { useRegisterUserMutation, useLoginUserMutation } from '@/api/mutations';
-import { UserRole } from '@/types';
-import { isValidUserRole } from '@/utils';
-import icons from '@/constants/icons';
+import { useState } from 'react';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
+import { useAuth } from '@/hooks';
+import { toast } from 'react-toastify';
 import { Logo } from '@/components';
-import { NotFound } from '@/pages/errors';
+import { useLogin } from '@/api/mutations';
 
 import {
   Card,
@@ -18,189 +16,246 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
+import { Eye, EyeOff, Loader2 } from 'lucide-react';
 
-const socialProviders = [
-  { name: 'Google', icon: icons.googleIcon, key: 'Google' },
-  { name: 'Facebook', icon: icons.googleIcon, key: 'Facebook' },
-];
-
+// Demo credentials from backend seeder
 const demoCredentials = {
-  user: { email: 'demo@user.com', password: 'User123!' },
-  admin: { email: 'demo@admin.com', password: 'Admin123!' },
+  user: { email: 'user1@portfolio.com', password: 'User@123' },
+  admin: { email: 'admin@portfolio.com', password: 'Admin@123' },
 };
 
 const UserLogin = () => {
-  const registerUserMutation = useRegisterUserMutation();
-  const loginUserMutation = useLoginUserMutation();
-  const { userType } = useParams();
-  const [showAll, setShowAll] = useState(false);
-  const [isSignUp, setIsSignUp] = useState(false);
-  const [demoMode, setDemoMode] = useState<'user' | 'admin' | null>(null);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { login } = useAuth();
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [errors, setErrors] = useState<{ email?: string; password?: string }>(
+    {}
+  );
 
-  const isInvalidUser = !userType || !isValidUserRole(userType);
-  const role = userType as UserRole;
+  const from = (location.state as any)?.from?.pathname || '/dashboard';
 
-  useEffect(() => {
-    if (demoMode === 'user') {
-      setEmail(demoCredentials.user.email);
-      setPassword(demoCredentials.user.password);
-    } else if (demoMode === 'admin') {
-      setEmail(demoCredentials.admin.email);
-      setPassword(demoCredentials.admin.password);
+  const validateForm = () => {
+    const newErrors: { email?: string; password?: string } = {};
+
+    if (!email) {
+      newErrors.email = 'Email is required';
+    } else if (!/\S+@\S+\.\S+/.test(email)) {
+      newErrors.email = 'Email is invalid';
     }
-  }, [demoMode]);
 
-  const handleSocialLogin = (provider: string) => {
-    const baseUrl = import.meta.env.VITE_TurVistoAPI_BASE_URL;
-    const returnUrl = encodeURIComponent(
-      `${window.location.origin}/auth/callback`
-    );
+    if (!password) {
+      newErrors.password = 'Password is required';
+    } else if (password.length < 6) {
+      newErrors.password = 'Password must be at least 6 characters';
+    }
 
-    // Redirect to backend OAuth endpoint
-    window.location.href = `${baseUrl}external/login?provider=${provider}&returnUrl=${returnUrl}`;
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmitClick = () => {
-    if (isSignUp) {
-      registerUserMutation.mutate({ email, password });
-    } else {
-      loginUserMutation.mutate({ email, password });
+  const loginMutation = useLogin({
+    onSuccess: (response) => {
+      if (response.success && response.data) {
+        const userData = response.data;
+
+        // Store tokens
+        localStorage.setItem('accessToken', userData.accessToken);
+        localStorage.setItem('refreshToken', userData.refreshToken);
+
+        // Update auth context
+        login({
+          id: userData.userId,
+          name: `${userData.firstName} ${userData.lastName}`,
+          email: userData.email,
+          role: userData.role as any,
+        });
+
+        toast.success('Login successful!');
+        navigate(from, { replace: true });
+      }
+    },
+  });
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!validateForm()) {
+      return;
     }
+
+    loginMutation.mutate({
+      email,
+      password,
+    });
   };
 
-  if (isInvalidUser) return <NotFound />;
+  const isLoading = loginMutation.isPending;
 
-  const title = [UserRole.Admin, UserRole].includes(role)
-    ? 'Admin Dashboard Login'
-    : 'Start Your Travel Journey';
+  const handleDemoLogin = async (type: 'user' | 'admin') => {
+    const credentials =
+      type === 'admin' ? demoCredentials.admin : demoCredentials.user;
+    setEmail(credentials.email);
+    setPassword(credentials.password);
 
-  const message = [UserRole.Admin, UserRole].includes(role)
-    ? 'Sign in with Google to manage destinations, itineraries, and user activity with ease.'
-    : 'Sign in with Google to explore AI-generated itineraries, trending destinations, and much more';
+    // Trigger login after a brief delay
+    setTimeout(() => {
+      handleSubmit(new Event('submit') as any);
+    }, 100);
+  };
 
   return (
-    <main
-      className={`relative ${
-        showAll ? 'min-h-screen' : 'h-screen'
-      } w-full bg-auth bg-no-repeat bg-cover bg-center overflow-y-auto overflow-x-hidden`}
-    >
-      <div className='absolute inset-0 bg-light-200/60 z-10' />
-      <div className='relative z-20 flex items-center justify-center min-h-screen px-4 py-6 sm:py-10'>
-        <Card className='w-full max-w-[495px] bg-white shadow-xl/30 border border-light-100 rounded-[20px] px-5 sm:px-6 py-8 sm:py-10 shadow-600 text-center flex flex-col gap-4'>
-          <CardHeader>
-            <Logo wrapperClasses='flex-center gap-2' />
-            <CardTitle className='p-28-semibold text-dark-100 mt-6 mb-2'>
-              {title}
-            </CardTitle>
-            <CardDescription className='p-18-regular text-gray-100 leading-7'>
-              {message}
-            </CardDescription>
-          </CardHeader>
+    <main className='relative min-h-screen w-full bg-light-200 flex items-center justify-center overflow-y-auto overflow-x-hidden px-4 py-8'>
+      <Card className='w-full max-w-md bg-white shadow-lg border border-light-400 rounded-20 p-6 sm:p-8'>
+        <CardHeader className='space-y-4'>
+          <Logo wrapperClasses='flex-center gap-2' />
+          <CardTitle className='p-30-bold text-dark-100 text-center'>
+            Welcome Back
+          </CardTitle>
+          <CardDescription className='p-16-regular text-gray-500 text-center'>
+            Sign in to manage your investment portfolio
+          </CardDescription>
+        </CardHeader>
 
-          <CardContent className='flex flex-col gap-4 mt-4 sm:mt-6'>
-            {socialProviders
-              .filter((_, idx) => showAll || idx === 0)
-              .map((provider) => (
-                <Button
-                  key={provider.key}
-                  className='w-full flex-center gap-2 border border-light-100 rounded-[8px] shadow-100 py-4 sm:py-5 px-4 p-18-regular leading-6 cursor-pointer bg-primary-100 text-white'
-                  onClick={() => handleSocialLogin(provider.key)}
+        <form onSubmit={handleSubmit}>
+          <CardContent className='space-y-4 mt-6'>
+            <div className='space-y-2'>
+              <Label htmlFor='email' className='p-14-medium text-dark-100'>
+                Email
+              </Label>
+              <Input
+                id='email'
+                type='email'
+                placeholder='admin@portfolio.com'
+                value={email}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  setErrors((prev) => ({ ...prev, email: undefined }));
+                }}
+                className={`${errors.email ? 'border-destructive' : ''}`}
+                disabled={isLoading}
+              />
+              {errors.email && (
+                <p className='text-sm text-destructive'>{errors.email}</p>
+              )}
+            </div>
+
+            <div className='space-y-2'>
+              <Label htmlFor='password' className='p-14-medium text-dark-100'>
+                Password
+              </Label>
+              <div className='relative'>
+                <Input
+                  id='password'
+                  type={showPassword ? 'text' : 'password'}
+                  placeholder='Enter your password'
+                  value={password}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    setErrors((prev) => ({ ...prev, password: undefined }));
+                  }}
+                  className={`pr-10 ${
+                    errors.password ? 'border-destructive' : ''
+                  }`}
+                  disabled={isLoading}
+                />
+                <button
+                  type='button'
+                  onClick={() => setShowPassword(!showPassword)}
+                  className='absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700'
                 >
-                  <img src={provider.icon} alt={`${provider.name} icon`} />
-                  Continue with {provider.name}
-                </Button>
-              ))}
+                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                </button>
+              </div>
+              {errors.password && (
+                <p className='text-sm text-destructive'>{errors.password}</p>
+              )}
+            </div>
 
-            {showAll && (
-              <>
-                <div className='relative flex items-center justify-center text-xs uppercase text-gray-100 before:absolute before:w-full before:h-px before:bg-border before:top-1/2 before:left-0'>
-                  <span className='relative z-10 bg-white px-2'>OR</span>
-                </div>
-
-                <div className='grid gap-4 text-left'>
-                  <div className='grid gap-2'>
-                    <Label htmlFor='email'>Email</Label>
-                    <Input
-                      id='email'
-                      type='email'
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      disabled={!!demoMode}
-                    />
-                  </div>
-                  <div className='grid gap-2'>
-                    <Label htmlFor='password'>Password</Label>
-                    <Input
-                      id='password'
-                      type='password'
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      disabled={!!demoMode}
-                    />
-                  </div>
-                  {!isSignUp && (
-                    <div className='text-right'>
-                      <Button variant='link' className='text-sm cursor-pointer'>
-                        Forgot password?
-                      </Button>
-                    </div>
-                  )}
-                  <Button
-                    className='w-full border border-light-100 rounded-[8px] shadow-100 py-4 sm:py-5 px-4 p-18-regular leading-6 cursor-pointer bg-primary-100 text-white'
-                    onClick={handleSubmitClick}
-                    disabled={
-                      registerUserMutation.isPending ||
-                      loginUserMutation.isPending
-                    }
-                  >
-                    {isSignUp ? 'Sign Up' : 'Sign In'}
-                  </Button>
-                </div>
-
-                <div className='flex flex-col gap-2 mt-4'>
-                  <Button
-                    variant='outline'
-                    onClick={() => setDemoMode('user')}
-                    className='w-full rounded-[8px] shadow-100 py-4 sm:py-5 px-4 p-18-regular leading-6 cursor-pointer'
-                  >
-                    Demo User Login
-                  </Button>
-                  <Button
-                    variant='outline'
-                    onClick={() => setDemoMode('admin')}
-                    className='w-full rounded-[8px] shadow-100 py-4 sm:py-5 px-4 p-18-regular leading-6 cursor-pointer'
-                  >
-                    Demo Admin Login
-                  </Button>
-                </div>
-              </>
-            )}
+            <div className='flex items-center justify-between'>
+              <div className='flex items-center space-x-2'>
+                <input
+                  type='checkbox'
+                  id='remember'
+                  className='w-4 h-4 rounded border-gray-300'
+                />
+                <Label
+                  htmlFor='remember'
+                  className='p-14-regular text-gray-700 cursor-pointer'
+                >
+                  Remember me
+                </Label>
+              </div>
+              <Link
+                to='/auth/forgot-password'
+                className='p-14-medium text-primary-100 hover:text-primary-500'
+              >
+                Forgot password?
+              </Link>
+            </div>
 
             <Button
-              variant='ghost'
-              className='mt-4 text-primary-100 cursor-pointer'
-              onClick={() => setShowAll((prev) => !prev)}
+              type='submit'
+              className='w-full bg-primary-100 hover:bg-primary-500 text-white py-3 rounded-lg p-16-semibold'
+              disabled={isLoading}
             >
-              {showAll ? 'Show Less Options' : 'Show More Options'}
+              {isLoading ? (
+                <>
+                  <Loader2 className='mr-2 h-4 w-4 animate-spin' />
+                  Signing in...
+                </>
+              ) : (
+                'Sign In'
+              )}
             </Button>
+
+            <div className='relative flex items-center justify-center text-sm text-gray-500 my-6'>
+              <div className='absolute inset-0 flex items-center'>
+                <div className='w-full border-t border-light-400'></div>
+              </div>
+              <span className='relative bg-white px-4 text-xs uppercase'>
+                Demo Credentials
+              </span>
+            </div>
+
+            <div className='grid grid-cols-2 gap-3'>
+              <Button
+                type='button'
+                variant='outline'
+                onClick={() => handleDemoLogin('user')}
+                disabled={isLoading}
+                className='w-full py-2.5 rounded-lg p-14-medium border-light-400 hover:bg-light-300'
+              >
+                User Demo
+              </Button>
+              <Button
+                type='button'
+                variant='outline'
+                onClick={() => handleDemoLogin('admin')}
+                disabled={isLoading}
+                className='w-full py-2.5 rounded-lg p-14-medium border-light-400 hover:bg-light-300'
+              >
+                Admin Demo
+              </Button>
+            </div>
           </CardContent>
 
-          <CardFooter className='justify-center mt-2'>
-            <span className='text-sm text-gray-100'>
-              {isSignUp ? 'Already have an account?' : "Don't have an account?"}{' '}
-              <Button
-                onClick={() => setIsSignUp((prev) => !prev)}
-                className='text-primary-100 cursor-pointer'
-                variant='ghost'
+          <CardFooter className='flex flex-col space-y-4 mt-6'>
+            <div className='text-center text-sm text-gray-500'>
+              Don't have an account?{' '}
+              <Link
+                to='/auth/register'
+                className='text-primary-100 hover:text-primary-500 font-medium'
               >
-                {isSignUp ? 'Sign In' : 'Sign Up'}
-              </Button>
-            </span>
+                Sign Up
+              </Link>
+            </div>
           </CardFooter>
-        </Card>
-      </div>
+        </form>
+      </Card>
     </main>
   );
 };
