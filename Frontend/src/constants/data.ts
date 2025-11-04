@@ -27,33 +27,18 @@ const dashboardStats: DashboardStatsType[] = [
 
 // Admin Navigation
 const navLinksAdmin: NavLinkType[] = [
-  { lable: 'Dashboard', icon: icons.homeIcon, link: '/admin/dashboard' },
-  { lable: 'Users', icon: icons.usersIcon, link: '/admin/users' },
-  {
-    lable: 'Investments',
-    icon: icons.homeIcon,
-    link: '/admin/investments',
-  },
-  {
-    lable: 'Transactions',
-    icon: icons.homeIcon,
-    link: '/admin/transactions',
-  },
-  { lable: 'Reports', icon: icons.homeIcon, link: '/admin/reports' },
-  {
-    lable: 'Activity Log',
-    icon: icons.homeIcon,
-    link: '/admin/activity-log',
-  },
+  { lable: 'Dashboard', icon: icons.homeIcon, link: 'admin/dashboard' },
+  { lable: 'Users', icon: icons.usersIcon, link: 'admin/users' },
 ];
 
 // User Navigation
 const navLinksUser: NavLinkType[] = [
-  { lable: 'Dashboard', icon: icons.homeIcon, link: '/dashboard' },
-  { lable: 'Investments', icon: icons.homeIcon, link: '/investments' },
-  { lable: 'Transactions', icon: icons.homeIcon, link: '/transactions' },
-  { lable: 'Reports', icon: icons.homeIcon, link: '/reports' },
-  { lable: 'Profile', icon: icons.homeIcon, link: '/profile' },
+  { lable: 'Dashboard', icon: icons.homeIcon, link: 'dashboard' },
+  { lable: 'Portfolios', icon: icons.groupIcon, link: 'portfolios' },
+  { lable: 'Investments', icon: icons.incrementIcon, link: 'investments' },
+  { lable: 'Transactions', icon: icons.itineraryIcon, link: 'transactions' },
+  { lable: 'Reports', icon: icons.discoverIcon, link: 'reports' },
+  { lable: 'Profile', icon: icons.usersIcon, link: 'profile' },
 ];
 
 export { navLinksAdmin, navLinksUser, dashboardStats };
