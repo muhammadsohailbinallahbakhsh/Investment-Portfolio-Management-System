@@ -9,6 +9,8 @@ import type {
   Transaction,
   DashboardStats,
   AdminDashboardStats,
+  UserDashboardDto,
+  PortfolioSummaryCards,
   User,
   ActivityLog,
   PerformanceSummaryReport,
@@ -259,6 +261,29 @@ export const useRecentTransactions = (
 // Dashboard Queries
 // ============================================
 
+export const useDashboard = (
+  options?: UseQueryOptions<ApiResponse<import('@/types').UserDashboardDto>>
+) => {
+  return useQuery({
+    queryKey: queryKeys.userDashboard,
+    queryFn: () => dashboardService.getDashboard(),
+    ...options,
+  });
+};
+
+export const useDashboardSummary = (
+  options?: UseQueryOptions<
+    ApiResponse<import('@/types').PortfolioSummaryCards>
+  >
+) => {
+  return useQuery({
+    queryKey: [...queryKeys.userDashboard, 'summary'],
+    queryFn: () => dashboardService.getSummaryCards(),
+    ...options,
+  });
+};
+
+// Legacy hook
 export const useUserDashboard = (
   options?: UseQueryOptions<ApiResponse<DashboardStats>>
 ) => {

@@ -282,17 +282,10 @@ namespace Backend.Services.Implementations
                 .Select(g =>
                 {
                     var typeValue = g.Sum(i => i.CurrentValue);
-                    var percentage = totalValue > 0
-                        ? Math.Round((typeValue / totalValue) * 100, 2)
-                        : 0;
-
-                    return new AssetAllocationItem
+                    return new
                     {
                         Type = g.Key,
-                        Value = typeValue,
-                        Percentage = percentage,
-                        Count = g.Count(),
-                        Color = _typeColors.ContainsKey(g.Key) ? _typeColors[g.Key] : _typeColors["Other"]
+                        Value = typeValue
                     };
                 })
                 .OrderByDescending(a => a.Value)
@@ -300,7 +293,8 @@ namespace Backend.Services.Implementations
 
             return new AssetAllocationData
             {
-                Allocations = allocationByType,
+                Labels = allocationByType.Select(a => a.Type).ToList(),
+                Values = allocationByType.Select(a => a.Value).ToList(),
                 TotalValue = totalValue,
                 TotalInvestments = investmentList.Count
             };

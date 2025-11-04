@@ -283,6 +283,60 @@ export interface TransactionPreviewResult {
 // Dashboard Types
 // ============================================
 
+export interface InvestmentPerformanceCard {
+  id: number;
+  name: string;
+  type: string;
+  currentValue: number;
+  initialAmount: number;
+  gainLoss: number;
+  gainLossPercentage: number;
+  status: string;
+  purchaseDate: string;
+}
+
+export interface PortfolioSummaryCards {
+  totalInvestmentValue: number;
+  totalInvested: number;
+  totalGainLoss: number;
+  totalGainLossPercentage: number;
+  numberOfActiveInvestments: number;
+  totalInvestments: number;
+  bestPerforming?: InvestmentPerformanceCard;
+  worstPerforming?: InvestmentPerformanceCard;
+  totalTransactions: number;
+  lastTransactionDate?: string;
+  portfolioCount: number;
+}
+
+export interface RecentTransactionDto {
+  id: number;
+  investmentName: string;
+  type: string;
+  amount: number;
+  date: string;
+  description?: string;
+}
+
+export interface PerformanceChartData {
+  labels: string[];
+  values: number[];
+}
+
+export interface AssetAllocationData {
+  labels: string[];
+  values: number[];
+}
+
+export interface UserDashboardDto {
+  summaryCards: PortfolioSummaryCards;
+  recentTransactions: RecentTransactionDto[];
+  performanceChart: PerformanceChartData;
+  assetAllocation: AssetAllocationData;
+  generatedAt: string;
+}
+
+// Legacy type (kept for backward compatibility)
 export interface DashboardStats {
   totalPortfolios: number;
   totalInvestments: number;

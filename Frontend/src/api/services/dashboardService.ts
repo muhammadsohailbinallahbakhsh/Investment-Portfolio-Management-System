@@ -1,5 +1,11 @@
 import axiosInstance from '../api';
-import type { ApiResponse, DashboardStats, AdminDashboardStats } from '@/types';
+import type {
+  ApiResponse,
+  UserDashboardDto,
+  PortfolioSummaryCards,
+  DashboardStats,
+  AdminDashboardStats,
+} from '@/types';
 
 // ============================================
 // Dashboard Service
@@ -7,7 +13,27 @@ import type { ApiResponse, DashboardStats, AdminDashboardStats } from '@/types';
 
 export const dashboardService = {
   /**
-   * Get user dashboard statistics
+   * Get complete user dashboard data
+   */
+  getDashboard: async () => {
+    const response = await axiosInstance.get<ApiResponse<UserDashboardDto>>(
+      '/api/dashboard'
+    );
+    return response.data;
+  },
+
+  /**
+   * Get user dashboard summary cards only
+   */
+  getSummaryCards: async () => {
+    const response = await axiosInstance.get<
+      ApiResponse<PortfolioSummaryCards>
+    >('/api/dashboard/summary');
+    return response.data;
+  },
+
+  /**
+   * Get user dashboard statistics (legacy)
    */
   getUserStats: async () => {
     const response = await axiosInstance.get<ApiResponse<DashboardStats>>(

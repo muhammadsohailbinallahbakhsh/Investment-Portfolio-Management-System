@@ -57,6 +57,12 @@ export type {
   // Dashboard
   DashboardStats,
   AdminDashboardStats,
+  UserDashboardDto,
+  PortfolioSummaryCards,
+  InvestmentPerformanceCard,
+  RecentTransactionDto,
+  PerformanceChartData,
+  AssetAllocationData,
 
   // Reports
   ReportDateRange,
