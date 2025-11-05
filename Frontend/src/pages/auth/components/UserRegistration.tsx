@@ -122,7 +122,7 @@ const UserRegistration = () => {
             email: userData.email,
             role: userData.role === 'Admin' ? UserRole.Admin : UserRole.User,
             profileUrl: '',
-            dateJoined: new Date(),
+            dateJoined: new Date().toISOString(),
           })
         );
 

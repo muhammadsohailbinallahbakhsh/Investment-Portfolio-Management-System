@@ -41,7 +41,7 @@ const Sidebar = ({ role, onNavigate }: SidebarPropsType) => {
         email: '',
         role: UserRole.User,
         profileUrl: '',
-        dateJoined: new Date(),
+        dateJoined: new Date().toISOString(),
       })
     );
 

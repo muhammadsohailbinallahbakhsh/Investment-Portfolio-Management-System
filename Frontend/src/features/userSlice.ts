@@ -13,7 +13,7 @@ const getInitialState = (): UserSliceType => {
         email: user.email || '',
         role: (user.role as UserRole) || UserRole.User,
         profileUrl: images.michaelImg,
-        dateJoined: user.dateJoined ? new Date(user.dateJoined) : new Date(),
+        dateJoined: user.dateJoined || new Date().toISOString(),
       };
     }
   } catch (error) {
@@ -26,7 +26,7 @@ const getInitialState = (): UserSliceType => {
     email: '',
     role: UserRole.User,
     profileUrl: images.michaelImg,
-    dateJoined: new Date(),
+    dateJoined: new Date().toISOString(),
   };
 };
 

@@ -35,7 +35,7 @@ const Navbar = ({ isAdmin, toggleSidebar }: NavbarPropsType) => {
         email: '',
         role: UserRole.User,
         profileUrl: '',
-        dateJoined: new Date(),
+        dateJoined: new Date().toISOString(),
       })
     );
 

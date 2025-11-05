@@ -5,5 +5,5 @@ export type UserSliceType = {
   name: string;
   email: string;
   profileUrl: string;
-  dateJoined: Date;
+  dateJoined: string;
 };
