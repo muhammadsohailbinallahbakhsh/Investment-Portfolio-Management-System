@@ -31,8 +31,10 @@ import {
 } from '@/utils';
 import type { InvestmentPerformanceCard, RecentTransactionDto } from '@/types';
 import { useNavigate } from 'react-router-dom';
-import { PortfolioPerformanceChart } from '@/components/charts/PortfolioPerformanceChart';
-import { AssetAllocationChart } from '@/components/charts/AssetAllocationChart';
+import {
+  PortfolioPerformanceChart,
+  AssetAllocationChart,
+} from '@/components/charts';
 
 const Dashboard = () => {
   const { data, isLoading, isError, error } = useDashboard();
