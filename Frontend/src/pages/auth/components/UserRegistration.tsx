@@ -4,6 +4,9 @@ import { useAuth } from '@/hooks';
 import { toast } from 'react-toastify';
 import { Logo } from '@/components';
 import { useRegister } from '@/api/mutations';
+import { useAppDispatch } from '@/hooks/useAppDispatch';
+import { setUser } from '@/features/userSlice';
+import { UserRole } from '@/types';
 
 import {
   Card,
@@ -29,6 +32,7 @@ interface FormErrors {
 const UserRegistration = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
+  const dispatch = useAppDispatch();
 
   const [formData, setFormData] = useState({
     firstName: '',
@@ -110,6 +114,17 @@ const UserRegistration = () => {
           email: userData.email,
           role: userData.role as any,
         });
+
+        // Update Redux store with user role
+        dispatch(
+          setUser({
+            name: `${formData.firstName} ${formData.lastName}`,
+            email: userData.email,
+            role: userData.role === 'Admin' ? UserRole.Admin : UserRole.User,
+            profileUrl: '',
+            dateJoined: new Date(),
+          })
+        );
 
         toast.success('Registration successful! Welcome aboard!');
         navigate('/dashboard', { replace: true });

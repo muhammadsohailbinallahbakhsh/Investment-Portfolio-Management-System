@@ -2,13 +2,35 @@ import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 import { type UserSliceType, UserRole } from '@/types';
 import images from '@/constants/images';
 
-export const initialState: UserSliceType = {
-  name: 'Muhammad Sohail',
-  email: 'sohailbinAllahBakhsh@gmail.com',
-  role: UserRole.User,
-  profileUrl: images.michaelImg,
-  dateJoined: new Date(),
+// Initialize from localStorage if available
+const getInitialState = (): UserSliceType => {
+  try {
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      const user = JSON.parse(storedUser);
+      return {
+        name: user.name || 'Guest User',
+        email: user.email || '',
+        role: (user.role as UserRole) || UserRole.User,
+        profileUrl: images.michaelImg,
+        dateJoined: user.dateJoined ? new Date(user.dateJoined) : new Date(),
+      };
+    }
+  } catch (error) {
+    console.error('Error loading user from localStorage:', error);
+  }
+
+  // Default state if no stored user
+  return {
+    name: 'Guest User',
+    email: '',
+    role: UserRole.User,
+    profileUrl: images.michaelImg,
+    dateJoined: new Date(),
+  };
 };
+
+export const initialState: UserSliceType = getInitialState();
 
 const userSlice = createSlice({
   name: 'productFilter',

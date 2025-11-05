@@ -4,6 +4,9 @@ import { useAuth } from '@/hooks';
 import { toast } from 'react-toastify';
 import { Logo } from '@/components';
 import { useLogin } from '@/api/mutations';
+import { useAppDispatch } from '@/hooks/useAppDispatch';
+import { setUser } from '@/features/userSlice';
+import { UserRole } from '@/types';
 
 import {
   Card,
@@ -28,6 +31,7 @@ const UserLogin = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { login } = useAuth();
+  const dispatch = useAppDispatch();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -62,6 +66,11 @@ const UserLogin = () => {
       if (response.success && response.data) {
         const userData = response.data;
 
+        console.log('Login response data:', userData);
+        console.log('User role from backend:', userData.role);
+        console.log('Role type:', typeof userData.role);
+        console.log('Is Admin?', userData.role === 'Admin');
+
         // Store tokens
         localStorage.setItem('accessToken', userData.accessToken);
         localStorage.setItem('refreshToken', userData.refreshToken);
@@ -74,8 +83,29 @@ const UserLogin = () => {
           role: userData.role as any,
         });
 
+        // Update Redux store with user role
+        dispatch(
+          setUser({
+            name: `${userData.firstName} ${userData.lastName}`,
+            email: userData.email,
+            role: userData.role === 'Admin' ? UserRole.Admin : UserRole.User,
+            profileUrl: '',
+            dateJoined: new Date(),
+          })
+        );
+
         toast.success('Login successful!');
-        navigate(from, { replace: true });
+
+        // Navigate based on role - Check role before navigation
+        const targetPath =
+          userData.role === 'Admin' ? '/admin/dashboard' : from;
+        console.log('Navigating to:', targetPath);
+
+        // Use setTimeout to ensure state updates are processed
+        setTimeout(() => {
+          navigate(targetPath, { replace: true });
+          console.log('Navigation complete to:', targetPath);
+        }, 100);
       }
     },
   });

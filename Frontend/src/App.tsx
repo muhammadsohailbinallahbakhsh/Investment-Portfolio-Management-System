@@ -9,6 +9,7 @@ import {
   Users,
   User as UserDetail,
   EditUser,
+  ActivityLogs,
 } from './pages/admin';
 
 // User Pages
@@ -162,6 +163,7 @@ function App() {
                   <Route path='users' element={<Users />} />
                   <Route path='users/:userId' element={<UserDetail />} />
                   <Route path='users/:userId/edit' element={<EditUser />} />
+                  <Route path='activity-logs' element={<ActivityLogs />} />
                 </Route>
               </Route>
 

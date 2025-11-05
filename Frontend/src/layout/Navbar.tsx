@@ -3,6 +3,9 @@ import { Logo } from '@/components';
 import icons from '@/constants/icons';
 import { useAuth } from '@/hooks';
 import { useNavigate } from 'react-router-dom';
+import { useAppDispatch } from '@/hooks/useAppDispatch';
+import { setUser } from '@/features/userSlice';
+import { UserRole } from '@/types';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,9 +22,23 @@ import type { NavbarPropsType } from '@/types/components';
 const Navbar = ({ isAdmin, toggleSidebar }: NavbarPropsType) => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
 
   const handleLogout = () => {
+    // Clear auth context
     logout();
+
+    // Reset Redux store to default guest user
+    dispatch(
+      setUser({
+        name: 'Guest User',
+        email: '',
+        role: UserRole.User,
+        profileUrl: '',
+        dateJoined: new Date(),
+      })
+    );
+
     navigate('/auth/login');
   };
 
