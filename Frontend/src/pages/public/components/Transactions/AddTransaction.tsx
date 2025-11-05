@@ -64,23 +64,14 @@ const AddTransaction = () => {
   );
 
   useEffect(() => {
-    console.log('Preview useEffect triggered:', {
-      investmentId: formData.investmentId,
-      type: formData.type,
-      quantity: formData.quantity,
-      pricePerUnit: formData.pricePerUnit,
-    });
-
     if (
       formData.investmentId &&
       formData.type &&
       formData.quantity > 0 &&
       formData.pricePerUnit > 0
     ) {
-      console.log('Calling calculatePreview...');
       calculatePreview();
     } else {
-      console.log('Conditions not met, clearing preview');
       setPreview(null);
       setPreviewError('');
     }
@@ -104,7 +95,6 @@ const AddTransaction = () => {
       };
 
       const response = await transactionService.preview(previewData);
-      console.log('Preview response:', response);
 
       // Check if response has the expected structure
       if (response && response.data) {

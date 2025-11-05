@@ -66,10 +66,7 @@ const UserLogin = () => {
       if (response.success && response.data) {
         const userData = response.data;
 
-        console.log('Login response data:', userData);
-        console.log('User role from backend:', userData.role);
-        console.log('Role type:', typeof userData.role);
-        console.log('Is Admin?', userData.role === 'Admin');
+        
 
         localStorage.setItem('accessToken', userData.accessToken);
         localStorage.setItem('refreshToken', userData.refreshToken);
@@ -95,11 +92,9 @@ const UserLogin = () => {
 
         const targetPath =
           userData.role === 'Admin' ? '/admin/dashboard' : from;
-        console.log('Navigating to:', targetPath);
 
         setTimeout(() => {
           navigate(targetPath, { replace: true });
-          console.log('Navigation complete to:', targetPath);
         }, 100);
       }
     },
