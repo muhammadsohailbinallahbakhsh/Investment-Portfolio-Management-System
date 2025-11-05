@@ -24,7 +24,7 @@ type NavLinkType = { lable: string; icon: string; link: string };
 type PageHeaderPropsType = {
   heading: string;
   subHeading: string;
-  buttonCaption: string;
+  buttonCaption?: string;
   shouldDisableButton?: boolean;
 };
 

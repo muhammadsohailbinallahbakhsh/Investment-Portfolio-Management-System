@@ -16,14 +16,16 @@ const PageHeader = ({
         <p className='p-18-regular text-gray-100'>{subHeading}</p>
       </div>
 
-      {/* Button */}
-      <Button
-        className='w-full md:w-auto flex items-center gap-2 border-2 border-light-100 shadow-100 rounded-[8px] py-5 px-4'
-        disabled={shouldDisableButton}
-      >
-        <img src={icons.plusIcon} alt='Add' />
-        {buttonCaption}
-      </Button>
+      {/* Button - Only render if buttonCaption is provided */}
+      {buttonCaption && (
+        <Button
+          className='w-full md:w-auto flex items-center gap-2 border-2 border-light-100 shadow-100 rounded-[8px] py-5 px-4'
+          disabled={shouldDisableButton}
+        >
+          <img src={icons.plusIcon} alt='Add' />
+          {buttonCaption}
+        </Button>
+      )}
     </header>
   );
 };

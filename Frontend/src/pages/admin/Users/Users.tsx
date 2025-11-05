@@ -209,7 +209,6 @@ const ManageUsersTable = () => {
       <PageHeader
         heading='Manage Users'
         subHeading='Search, filter, and manage all system users'
-        buttonCaption=''
       />
 
       {/* Search Bar */}

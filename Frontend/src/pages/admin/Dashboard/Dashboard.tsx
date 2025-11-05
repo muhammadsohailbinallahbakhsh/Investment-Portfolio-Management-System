@@ -55,7 +55,6 @@ const Dashboard = () => {
   return (
     <main className='w-full flex flex-col gap-6 items-start justify-start'>
       <PageHeader
-        buttonCaption=''
         subHeading='Monitor system-wide statistics and user activity'
         heading={`Welcome ${firstName} 👋`}
       />
