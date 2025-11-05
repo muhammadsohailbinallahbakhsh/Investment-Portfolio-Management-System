@@ -7,7 +7,7 @@ import { UserRole } from './types';
 import {
   Dashboard as AdminDashboard,
   Users,
-  User as UserDetail,
+  UserDetail,
   EditUser,
   ActivityLogs,
 } from './pages/admin';
