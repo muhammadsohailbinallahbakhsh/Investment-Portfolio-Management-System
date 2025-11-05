@@ -19,7 +19,6 @@ import {
   Search,
   Loader2,
   Eye,
-  Pencil,
   UserCheck,
   UserX,
   Power,
@@ -147,10 +146,6 @@ const ManageUsersTable = () => {
 
   const handleViewUser = (userId: string) => {
     navigate(`/admin/users/${userId}`);
-  };
-
-  const handleEditUser = (userId: string) => {
-    navigate(`/admin/users/${userId}/edit`);
   };
 
   const handleActivateUser = (userId: string, userName: string) => {
@@ -434,14 +429,6 @@ const ManageUsersTable = () => {
                             title='View details'
                           >
                             <Eye className='h-4 w-4' />
-                          </Button>
-                          <Button
-                            variant='ghost'
-                            size='sm'
-                            onClick={() => handleEditUser(user.id)}
-                            title='Edit user'
-                          >
-                            <Pencil className='h-4 w-4' />
                           </Button>
                           {user.isActive && !user.isDeleted ? (
                             <Button
