@@ -103,11 +103,9 @@ const UserRegistration = () => {
       if (response.success && response.data) {
         const userData = response.data;
 
-        // Store tokens
         localStorage.setItem('accessToken', userData.accessToken);
         localStorage.setItem('refreshToken', userData.refreshToken);
 
-        // Update auth context
         login({
           id: userData.userId,
           name: `${formData.firstName} ${formData.lastName}`,
@@ -115,7 +113,6 @@ const UserRegistration = () => {
           role: userData.role as any,
         });
 
-        // Update Redux store with user role
         dispatch(
           setUser({
             name: `${formData.firstName} ${formData.lastName}`,

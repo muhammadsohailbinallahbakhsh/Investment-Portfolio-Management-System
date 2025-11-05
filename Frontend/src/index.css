@@ -25,12 +25,11 @@
   --border: #ebeeed;
   --input: #ebeeed;
   --ring: #256ff1;
-  /* === Charts (for dashboards/analytics) === */
-  --chart-1: #ecfdf3; /* success-50 */
-  --chart-2: #b93815; /* red-500 */
-  --chart-3: #c11574; /* pink-500 */
-  --chart-4: #026aa2; /* navy-500 */
-  --chart-5: #12b76a; /* success-500 */
+  --chart-1: #ecfdf3;
+  --chart-2: #b93815;
+  --chart-3: #c11574;
+  --chart-4: #026aa2;
+  --chart-5: #12b76a;
   /* === Sidebar === */
   --sidebar: #ffffff;
   --sidebar-foreground: #1f1f36;

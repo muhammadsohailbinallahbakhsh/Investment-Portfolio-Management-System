@@ -45,7 +45,6 @@ const EditInvestment = () => {
   const investment = investmentData?.data;
   const portfolios = portfoliosData?.data || [];
 
-  // Form state
   const [formData, setFormData] = useState<UpdateInvestmentRequest>({
     name: '',
     type: '',
@@ -58,10 +57,8 @@ const EditInvestment = () => {
     notes: '',
   });
 
-  // Form errors
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
 
-  // Populate form when investment data loads
   useEffect(() => {
     if (investment) {
       setFormData({
@@ -78,19 +75,16 @@ const EditInvestment = () => {
     }
   }, [investment]);
 
-  // Handle input change
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-    // Clear error when user starts typing
     if (formErrors[name]) {
       setFormErrors((prev) => ({ ...prev, [name]: '' }));
     }
   };
 
-  // Handle number input change
   const handleNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -102,7 +96,6 @@ const EditInvestment = () => {
     }
   };
 
-  // Handle select change
   const handleSelectChange = (name: string, value: string) => {
     if (name === 'portfolioId') {
       setFormData((prev) => ({
@@ -117,7 +110,6 @@ const EditInvestment = () => {
     }
   };
 
-  // Validate form
   const validateForm = (): boolean => {
     const errors: Record<string, string> = {};
 
@@ -163,7 +155,6 @@ const EditInvestment = () => {
     return Object.keys(errors).length === 0;
   };
 
-  // Handle form submit
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -187,7 +178,6 @@ const EditInvestment = () => {
     );
   };
 
-  // Loading state
   if (isLoadingInvestment) {
     return (
       <div className='flex items-center justify-center min-h-[400px]'>
@@ -196,7 +186,6 @@ const EditInvestment = () => {
     );
   }
 
-  // Error state
   if (investmentError || !investment) {
     return (
       <div className='space-y-6 p-6'>

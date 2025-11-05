@@ -27,7 +27,6 @@ const PortfolioDetail = () => {
     parseInt(portfolioId || '0')
   );
 
-  // Format currency
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
@@ -35,7 +34,6 @@ const PortfolioDetail = () => {
     }).format(amount);
   };
 
-  // Format date
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',

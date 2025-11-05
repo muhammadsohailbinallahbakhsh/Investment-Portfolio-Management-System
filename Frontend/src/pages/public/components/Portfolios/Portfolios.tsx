@@ -49,7 +49,6 @@ const Portfolios = () => {
   const updatePortfolioMutation = useUpdatePortfolio();
   const deletePortfolioMutation = useDeletePortfolio();
 
-  // Modal states
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -57,7 +56,6 @@ const Portfolios = () => {
     null
   );
 
-  // Form states
   const [createForm, setCreateForm] = useState<CreatePortfolioRequest>({
     name: '',
     description: '',
@@ -73,11 +71,9 @@ const Portfolios = () => {
     description?: string;
   }>({});
 
-  // Handle create
   const handleCreateSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validation
     const errors: typeof formErrors = {};
     if (!createForm.name || createForm.name.trim().length < 2) {
       errors.name = 'Portfolio name must be at least 2 characters';
@@ -97,13 +93,11 @@ const Portfolios = () => {
     });
   };
 
-  // Handle edit
   const handleEditSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!selectedPortfolio) return;
 
-    // Validation
     const errors: typeof formErrors = {};
     if (editForm.name && editForm.name.trim().length < 2) {
       errors.name = 'Portfolio name must be at least 2 characters';
@@ -130,7 +124,6 @@ const Portfolios = () => {
     );
   };
 
-  // Handle delete
   const handleDeleteConfirm = () => {
     if (!selectedPortfolio) return;
 
@@ -142,7 +135,6 @@ const Portfolios = () => {
     });
   };
 
-  // Open edit modal
   const openEditModal = (portfolio: Portfolio) => {
     setSelectedPortfolio(portfolio);
     setEditForm({
@@ -153,13 +145,11 @@ const Portfolios = () => {
     setIsEditModalOpen(true);
   };
 
-  // Open delete modal
   const openDeleteModal = (portfolio: Portfolio) => {
     setSelectedPortfolio(portfolio);
     setIsDeleteModalOpen(true);
   };
 
-  // Calculate gain/loss
   const calculateGainLoss = (portfolio: Portfolio) => {
     const gainLoss = portfolio.currentValue - portfolio.totalInvested;
     const gainLossPercentage =
@@ -169,7 +159,6 @@ const Portfolios = () => {
     return { gainLoss, gainLossPercentage };
   };
 
-  // Format currency
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',

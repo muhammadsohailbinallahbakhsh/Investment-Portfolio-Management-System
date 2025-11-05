@@ -65,17 +65,15 @@ const ManageUsersTable = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
 
-  // Debounce search input
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearch(searchTerm);
-      setCurrentPage(1); // Reset to first page on new search
+      setCurrentPage(1);
     }, 500);
 
     return () => clearTimeout(timer);
   }, [searchTerm]);
 
-  // Fetch users with React Query
   const { data, isLoading, isError, error } = useQuery<PagedResponse>({
     queryKey: ['admin-users', currentPage, pageSize, debouncedSearch],
     queryFn: async () => {
@@ -95,7 +93,6 @@ const ManageUsersTable = () => {
     },
   });
 
-  // Activate user mutation
   const activateMutation = useMutation({
     mutationFn: async (userId: string) => {
       const response = await api.patch(`/api/admin/users/${userId}/activate`);
@@ -110,7 +107,6 @@ const ManageUsersTable = () => {
     },
   });
 
-  // Deactivate user mutation
   const deactivateMutation = useMutation({
     mutationFn: async (userId: string) => {
       const response = await api.patch(`/api/admin/users/${userId}/deactivate`);
@@ -125,7 +121,6 @@ const ManageUsersTable = () => {
     },
   });
 
-  // Delete user mutation
   const deleteMutation = useMutation({
     mutationFn: async (userId: string) => {
       const response = await api.delete(`/api/admin/users/${userId}`);
@@ -194,15 +189,6 @@ const ManageUsersTable = () => {
       ? 'bg-purple-100 text-purple-800'
       : 'bg-blue-100 text-blue-800';
   };
-
-  // const pagedUsers = useMemo(() => {
-  //   if (!usersPageData || usersPageData.length === 0) {
-  //     return [];
-  //   }
-  //   const startIndex = Math.max(0, (currentPage - 1) * pageSize);
-  //   const endIndex = Math.min(startIndex + pageSize, usersPageData.length);
-  //   return usersPageData.slice(startIndex, endIndex);
-  // }, [currentPage, pageSize]);
 
   return (
     <main className='w-full flex flex-col gap-6'>

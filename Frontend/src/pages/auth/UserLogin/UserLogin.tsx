@@ -71,11 +71,9 @@ const UserLogin = () => {
         console.log('Role type:', typeof userData.role);
         console.log('Is Admin?', userData.role === 'Admin');
 
-        // Store tokens
         localStorage.setItem('accessToken', userData.accessToken);
         localStorage.setItem('refreshToken', userData.refreshToken);
 
-        // Update auth context
         login({
           id: userData.userId,
           name: `${userData.firstName} ${userData.lastName}`,
@@ -83,7 +81,6 @@ const UserLogin = () => {
           role: userData.role as any,
         });
 
-        // Update Redux store with user role
         dispatch(
           setUser({
             name: `${userData.firstName} ${userData.lastName}`,
@@ -96,12 +93,10 @@ const UserLogin = () => {
 
         toast.success('Login successful!');
 
-        // Navigate based on role - Check role before navigation
         const targetPath =
           userData.role === 'Admin' ? '/admin/dashboard' : from;
         console.log('Navigating to:', targetPath);
 
-        // Use setTimeout to ensure state updates are processed
         setTimeout(() => {
           navigate(targetPath, { replace: true });
           console.log('Navigation complete to:', targetPath);
@@ -130,7 +125,6 @@ const UserLogin = () => {
     const credentials =
       type === 'admin' ? demoCredentials.admin : demoCredentials.user;
 
-    // Directly call the mutation with demo credentials
     loginMutation.mutate({
       email: credentials.email,
       password: credentials.password,

@@ -34,7 +34,6 @@ const exportToCSV = (data: any, reportType: string) => {
     new Date().toISOString().split('T')[0]
   }.csv`;
 
-  // Determine report type and format accordingly
   if (reportType === 'performance-summary') {
     csvContent = formatPerformanceSummaryToCSV(data);
   } else if (reportType === 'investment-distribution') {
@@ -61,8 +60,6 @@ const exportToJSON = (data: any, reportType: string) => {
 
 // Export to PDF (Simulation)
 const exportToPDF = (data: any, reportType: string) => {
-  // In a real application, you would use libraries like jsPDF or pdfmake
-  // For now, we'll create an HTML representation and open it in a new window
   const filename = `${reportType}_${
     new Date().toISOString().split('T')[0]
   }.pdf`;
@@ -81,14 +78,12 @@ const exportToPDF = (data: any, reportType: string) => {
     htmlContent = formatTopPerformingToHTML(data);
   }
 
-  // Open in new window for printing/saving as PDF
   const printWindow = window.open('', '_blank');
   if (printWindow) {
     printWindow.document.write(htmlContent);
     printWindow.document.close();
     printWindow.focus();
 
-    // Trigger print dialog after content loads
     setTimeout(() => {
       printWindow.print();
     }, 500);

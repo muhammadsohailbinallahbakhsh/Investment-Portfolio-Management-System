@@ -35,7 +35,6 @@ export const formatDate = (dateString: string | null | undefined): string => {
 
   const date = new Date(dateString);
 
-  // Check if date is valid
   if (isNaN(date.getTime())) {
     return 'Invalid Date';
   }
@@ -57,7 +56,6 @@ export const formatDateTime = (
 
   const date = new Date(dateString);
 
-  // Check if date is valid
   if (isNaN(date.getTime())) {
     return 'Invalid Date';
   }

@@ -44,7 +44,6 @@ const AddTransaction = () => {
 
   const investments = investmentsData?.data || [];
 
-  // Form state
   const [formData, setFormData] = useState<CreateTransactionRequest>({
     investmentId: 0,
     type: '',
@@ -54,20 +53,16 @@ const AddTransaction = () => {
     notes: '',
   });
 
-  // Preview state
   const [preview, setPreview] = useState<TransactionPreviewResult | null>(null);
   const [loadingPreview, setLoadingPreview] = useState(false);
   const [previewError, setPreviewError] = useState<string>('');
 
-  // Form errors
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
 
-  // Get selected investment details
   const selectedInvestment = investments.find(
     (inv: any) => inv.id === formData.investmentId
   );
 
-  // Auto-calculate preview when relevant fields change
   useEffect(() => {
     console.log('Preview useEffect triggered:', {
       investmentId: formData.investmentId,
@@ -96,7 +91,6 @@ const AddTransaction = () => {
     formData.pricePerUnit,
   ]);
 
-  // Calculate transaction preview
   const calculatePreview = async () => {
     try {
       setLoadingPreview(true);
@@ -133,19 +127,16 @@ const AddTransaction = () => {
     }
   };
 
-  // Handle input change
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-    // Clear error when user starts typing
     if (formErrors[name]) {
       setFormErrors((prev) => ({ ...prev, [name]: '' }));
     }
   };
 
-  // Handle number input change
   const handleNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -157,7 +148,6 @@ const AddTransaction = () => {
     }
   };
 
-  // Handle select change
   const handleSelectChange = (name: string, value: string) => {
     if (name === 'investmentId') {
       setFormData((prev) => ({
@@ -172,7 +162,6 @@ const AddTransaction = () => {
     }
   };
 
-  // Validate form
   const validateForm = (): boolean => {
     const errors: Record<string, string> = {};
 
@@ -216,7 +205,6 @@ const AddTransaction = () => {
     return Object.keys(errors).length === 0;
   };
 
-  // Handle form submit
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -240,7 +228,6 @@ const AddTransaction = () => {
     });
   };
 
-  // Format currency
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
@@ -249,7 +236,6 @@ const AddTransaction = () => {
     }).format(value);
   };
 
-  // Loading state for investments
   if (loadingInvestments) {
     return (
       <div className='flex items-center justify-center min-h-[400px]'>
@@ -258,7 +244,6 @@ const AddTransaction = () => {
     );
   }
 
-  // No investments state
   if (investments.length === 0) {
     return (
       <div className='space-y-6 p-6'>

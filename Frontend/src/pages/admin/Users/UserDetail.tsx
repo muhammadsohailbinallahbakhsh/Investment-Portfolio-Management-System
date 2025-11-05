@@ -86,7 +86,6 @@ const UserDetail = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
-  // Fetch user detail
   const { data, isLoading, isError, error } = useQuery<ApiResponse>({
     queryKey: ['admin-user-detail', userId],
     queryFn: async () => {
@@ -96,7 +95,6 @@ const UserDetail = () => {
     enabled: !!userId,
   });
 
-  // Activate user mutation
   const activateMutation = useMutation({
     mutationFn: async (id: string) => {
       const response = await api.patch(`/api/admin/users/${id}/activate`);
@@ -114,7 +112,6 @@ const UserDetail = () => {
     },
   });
 
-  // Deactivate user mutation
   const deactivateMutation = useMutation({
     mutationFn: async (id: string) => {
       const response = await api.patch(`/api/admin/users/${id}/deactivate`);
@@ -132,7 +129,6 @@ const UserDetail = () => {
     },
   });
 
-  // Delete user mutation
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
       const response = await api.delete(`/api/admin/users/${id}`);

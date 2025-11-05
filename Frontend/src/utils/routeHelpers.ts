@@ -41,12 +41,10 @@ export const getRedirectPath = (role?: UserRole): string => {
 export const canAccessRoute = (path: string, userRole?: UserRole): boolean => {
   if (!userRole) return false;
 
-  // Admin routes are only accessible to admins
   if (isAdminRoute(path)) {
     return userRole === UserRole.Admin;
   }
 
-  // All other protected routes are accessible to authenticated users
   return true;
 };
 

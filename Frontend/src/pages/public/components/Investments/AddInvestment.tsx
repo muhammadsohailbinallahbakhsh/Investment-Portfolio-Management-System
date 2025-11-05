@@ -29,13 +29,11 @@ const AddInvestment = () => {
 
   const portfolios = portfoliosData?.data || [];
 
-  // Get default portfolio or first portfolio
   const defaultPortfolioId =
     portfolios.length > 0
       ? portfolios.find((p) => p.isDefault)?.id || portfolios[0].id
       : 0;
 
-  // Form state
   const [formData, setFormData] = useState<CreateInvestmentRequest>({
     portfolioId: defaultPortfolioId,
     name: '',
@@ -48,22 +46,18 @@ const AddInvestment = () => {
     notes: '',
   });
 
-  // Form errors
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
 
-  // Handle input change
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-    // Clear error when user starts typing
     if (formErrors[name]) {
       setFormErrors((prev) => ({ ...prev, [name]: '' }));
     }
   };
 
-  // Handle number input change
   const handleNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -75,7 +69,6 @@ const AddInvestment = () => {
     }
   };
 
-  // Handle select change
   const handleSelectChange = (name: string, value: string) => {
     if (name === 'portfolioId') {
       setFormData((prev) => ({
@@ -90,7 +83,6 @@ const AddInvestment = () => {
     }
   };
 
-  // Validate form
   const validateForm = (): boolean => {
     const errors: Record<string, string> = {};
 
@@ -141,7 +133,6 @@ const AddInvestment = () => {
       return;
     }
 
-    // Prepare data for submission (remove empty strings)
     const submitData: CreateInvestmentRequest = {
       ...formData,
       brokerPlatform: formData.brokerPlatform?.trim() || undefined,

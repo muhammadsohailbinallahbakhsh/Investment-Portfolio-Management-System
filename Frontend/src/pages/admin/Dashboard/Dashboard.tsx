@@ -40,14 +40,13 @@ const Dashboard = () => {
   const user = useSelector((state: RootState) => state.userSlice);
   const firstName = user?.name?.split(' ')[0] || 'Admin';
 
-  // Fetch system statistics
   const { data, isLoading, isError } = useQuery<ApiResponse>({
     queryKey: ['admin-dashboard-stats'],
     queryFn: async () => {
       const response = await api.get<ApiResponse>('/api/admin/dashboard/stats');
       return response.data;
     },
-    refetchInterval: 30000, // Refetch every 30 seconds
+    refetchInterval: 30000,
   });
 
   const stats = data?.data;
