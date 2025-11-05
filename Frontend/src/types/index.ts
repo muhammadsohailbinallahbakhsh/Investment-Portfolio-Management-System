@@ -103,7 +103,6 @@ export type { UserSliceType } from './state';
 // Export component types
 export type {
   SidebarPropsType,
-  DashboardStatsType,
   NavLinkType,
   PageHeaderPropsType,
   StatCardPropsType,

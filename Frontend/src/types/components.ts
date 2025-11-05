@@ -11,14 +11,6 @@ type NavbarPropsType = {
   toggleSidebar: (value: React.SetStateAction<boolean>) => void;
 };
 
-type DashboardStatsType = {
-  caption: string;
-  count: number;
-  percentage: number;
-  icon: string;
-  arrow: string;
-};
-
 type NavLinkType = { lable: string; icon: string; link: string };
 
 type PageHeaderPropsType = {
@@ -39,7 +31,6 @@ type StatCardPropsType = {
 export type {
   SidebarPropsType,
   NavbarPropsType,
-  DashboardStatsType,
   NavLinkType,
   PageHeaderPropsType,
   StatCardPropsType,

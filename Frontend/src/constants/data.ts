@@ -1,29 +1,5 @@
 import icons from './icons';
-import type { DashboardStatsType, NavLinkType } from '@/types';
-
-const dashboardStats: DashboardStatsType[] = [
-  {
-    caption: 'Total Users',
-    count: 12450,
-    percentage: 12,
-    icon: icons.incrementIcon,
-    arrow: icons.arrowUpGreenIcon,
-  },
-  {
-    caption: 'Total Portfolios',
-    count: 3210,
-    percentage: 2,
-    icon: icons.decrementIcon,
-    arrow: icons.arrowDownRedIcon,
-  },
-  {
-    caption: 'Active Users Today',
-    count: 520,
-    percentage: 2,
-    icon: icons.incrementIcon,
-    arrow: icons.arrowUpGreenIcon,
-  },
-];
+import type { NavLinkType } from '@/types';
 
 // Admin Navigation
 const navLinksAdmin: NavLinkType[] = [
@@ -47,4 +23,4 @@ const navLinksUser: NavLinkType[] = [
   { lable: 'Profile', icon: icons.usersIcon, link: '/profile' },
 ];
 
-export { navLinksAdmin, navLinksUser, dashboardStats };
+export { navLinksAdmin, navLinksUser };
