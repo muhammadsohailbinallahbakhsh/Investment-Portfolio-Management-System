@@ -64,7 +64,6 @@ export interface ResetPasswordRequest {
 }
 
 export interface RefreshTokenRequest {
-  token: string;
   refreshToken: string;
 }
 

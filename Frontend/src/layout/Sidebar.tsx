@@ -17,7 +17,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { User, LogOut, Settings } from 'lucide-react';
+import { User, LogOut } from 'lucide-react';
 
 const Sidebar = ({ role, onNavigate }: SidebarPropsType) => {
   const navLinks = [UserRole.Admin].includes(role)
@@ -132,16 +132,6 @@ const Sidebar = ({ role, onNavigate }: SidebarPropsType) => {
             >
               <User className='mr-2 h-4 w-4' />
               <span>Profile</span>
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => {
-                navigate('/profile');
-                onNavigate?.();
-              }}
-              className='cursor-pointer'
-            >
-              <Settings className='mr-2 h-4 w-4' />
-              <span>Settings</span>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem

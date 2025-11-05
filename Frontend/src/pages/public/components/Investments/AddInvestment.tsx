@@ -204,6 +204,7 @@ const AddInvestment = () => {
                 Portfolio <span className='text-red-500'>*</span>
               </Label>
               <Select
+                key={`portfolioId-${formData.portfolioId}`}
                 value={formData.portfolioId?.toString() || ''}
                 onValueChange={(value) =>
                   handleSelectChange('portfolioId', value)
@@ -269,6 +270,7 @@ const AddInvestment = () => {
                   Type <span className='text-red-500'>*</span>
                 </Label>
                 <Select
+                  key={`type-${formData.type}`}
                   value={formData.type || 'select'}
                   onValueChange={(value) =>
                     handleSelectChange('type', value === 'select' ? '' : value)

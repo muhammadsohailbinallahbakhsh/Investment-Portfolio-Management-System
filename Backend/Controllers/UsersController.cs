@@ -159,12 +159,12 @@ namespace Backend.Controllers
         /// </summary>
         /// <param name="id">User ID</param>
         /// <param name="updateUserDto">Updated user information</param>
-        /// <returns>Success message</returns>
+        /// <returns>Updated user data</returns>
         [HttpPut("{id}")]
-        [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<UserDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status403Forbidden)]
-        [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ApiResponse<UserDto>), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> UpdateUser(string id, [FromBody] UpdateUserDto updateUserDto)
         {
             try
@@ -191,16 +191,16 @@ namespace Backend.Controllers
 
                 var result = await _userService.UpdateAsync(id, updateUserDto);
 
-                if (!result)
+                if (result == null)
                 {
-                    return NotFound(ApiResponse.ErrorResponse(
+                    return NotFound(ApiResponse<UserDto>.ErrorResponse(
                         "User not found or update failed"));
                 }
 
                 _logger.LogInformation("User updated: {UserId} by {UpdatedBy}", id, currentUserId);
 
-                return Ok(ApiResponse.SuccessResponse(
-                    "User profile updated successfully"));
+                return Ok(ApiResponse<UserDto>.SuccessResponse(
+                    result, "User profile updated successfully"));
             }
             catch (Exception ex)
             {

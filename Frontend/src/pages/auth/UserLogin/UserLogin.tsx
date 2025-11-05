@@ -110,8 +110,9 @@ const UserLogin = () => {
     },
   });
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    e.stopPropagation();
 
     if (!validateForm()) {
       return;
@@ -125,16 +126,15 @@ const UserLogin = () => {
 
   const isLoading = loginMutation.isPending;
 
-  const handleDemoLogin = async (type: 'user' | 'admin') => {
+  const handleDemoLogin = (type: 'user' | 'admin') => {
     const credentials =
       type === 'admin' ? demoCredentials.admin : demoCredentials.user;
-    setEmail(credentials.email);
-    setPassword(credentials.password);
 
-    // Trigger login after a brief delay
-    setTimeout(() => {
-      handleSubmit(new Event('submit') as any);
-    }, 100);
+    // Directly call the mutation with demo credentials
+    loginMutation.mutate({
+      email: credentials.email,
+      password: credentials.password,
+    });
   };
 
   return (

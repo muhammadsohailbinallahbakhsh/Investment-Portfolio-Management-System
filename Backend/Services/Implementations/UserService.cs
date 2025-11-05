@@ -54,20 +54,41 @@ namespace Backend.Services.Implementations
             return await _userRepository.GetTotalCountAsync();
         }
 
-        public async Task<bool> UpdateAsync(string id, UpdateUserDto updateUserDto)
+        public async Task<UserDto?> UpdateAsync(string id, UpdateUserDto updateUserDto)
         {
-            var user = await _userRepository.GetByIdAsync(id);
-            if (user == null) return false;
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null) return null;
 
             user.FirstName = updateUserDto.FirstName;
             user.LastName = updateUserDto.LastName;
-            if (!string.IsNullOrWhiteSpace(updateUserDto.Email))
+
+            // Update email and username using UserManager to ensure proper normalization
+            if (!string.IsNullOrWhiteSpace(updateUserDto.Email) && user.Email != updateUserDto.Email)
             {
-                user.Email = updateUserDto.Email;
-                user.UserName = updateUserDto.Email;
+                // Set email (this also sets NormalizedEmail)
+                var emailResult = await _userManager.SetEmailAsync(user, updateUserDto.Email);
+                if (!emailResult.Succeeded)
+                {
+                    return null;
+                }
+
+                // Set username to match email (this also sets NormalizedUserName)
+                var usernameResult = await _userManager.SetUserNameAsync(user, updateUserDto.Email);
+                if (!usernameResult.Succeeded)
+                {
+                    return null;
+                }
             }
 
-            return await _userRepository.UpdateAsync(user);
+            var updateResult = await _userManager.UpdateAsync(user);
+            if (!updateResult.Succeeded)
+            {
+                return null;
+            }
+
+            // Return the updated user data
+            var roles = await _userManager.GetRolesAsync(user);
+            return MapToDto(user, roles.FirstOrDefault() ?? "User");
         }
 
         public async Task<bool> DeleteAsync(string id)

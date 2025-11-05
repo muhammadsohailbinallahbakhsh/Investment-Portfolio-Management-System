@@ -99,7 +99,6 @@ axiosInstance.interceptors.response.use(
       const response = await axios.post<ApiResponse<AuthResponse>>(
         `${import.meta.env.VITE_BACKEND_BASE_URL}/api/auth/refresh-token`,
         {
-          token: accessToken,
           refreshToken: refreshToken,
         } as RefreshTokenRequest
       );

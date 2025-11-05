@@ -8,7 +8,7 @@ namespace Backend.Services.Interfaces
         Task<UserDto?> GetByEmailAsync(string email);
         Task<IEnumerable<UserDto>> GetAllAsync(int page, int pageSize);
         Task<int> GetTotalCountAsync();
-        Task<bool> UpdateAsync(string id, UpdateUserDto updateUserDto);
+        Task<UserDto?> UpdateAsync(string id, UpdateUserDto updateUserDto);
         Task<bool> DeleteAsync(string id);
         Task<bool> ToggleActiveStatusAsync(string id);
     }

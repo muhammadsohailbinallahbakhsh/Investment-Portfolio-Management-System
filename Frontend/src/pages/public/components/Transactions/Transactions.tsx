@@ -306,6 +306,7 @@ const Transactions = () => {
                     Investment
                   </Label>
                   <Select
+                    key={`investmentId-${filters.investmentId || 'all'}`}
                     value={filters.investmentId?.toString() || 'all'}
                     onValueChange={(value) =>
                       handleFilterChange(
@@ -335,6 +336,7 @@ const Transactions = () => {
                 <div className='space-y-2'>
                   <Label className='p-14-semibold text-dark-700'>Type</Label>
                   <Select
+                    key={`type-${filters.type || 'all'}`}
                     value={filters.type || 'all'}
                     onValueChange={(value) =>
                       handleFilterChange(

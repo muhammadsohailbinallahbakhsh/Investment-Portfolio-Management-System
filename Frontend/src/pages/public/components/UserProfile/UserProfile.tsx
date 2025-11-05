@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useUserProfile, useUpdateProfile } from '@/api';
 import { useAuth } from '@/hooks';
+import { useAppDispatch } from '@/hooks/useAppDispatch';
+import { setUser } from '@/features/userSlice';
 import {
   Card,
   CardContent,
@@ -14,12 +16,37 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
 import { Loader2, User, Mail, Save } from 'lucide-react';
-import type { UpdateUserRequest } from '@/types';
+import type { UpdateUserRequest, UserRole } from '@/types';
 
 const UserProfile = () => {
-  const { user: authUser } = useAuth();
+  const { user: authUser, updateUser: updateAuthUser } = useAuth();
+  const dispatch = useAppDispatch();
   const { data: profileData, isLoading: isLoadingProfile } = useUserProfile();
   const updateProfileMutation = useUpdateProfile();
+
+  // Handle successful profile update
+  const handleProfileUpdateSuccess = (response: any) => {
+    if (response.success && response.data) {
+      const updatedData = response.data;
+
+      // Update AuthContext
+      updateAuthUser({
+        name: `${updatedData.firstName} ${updatedData.lastName}`,
+        email: updatedData.email,
+      });
+
+      // Update Redux store
+      dispatch(
+        setUser({
+          name: `${updatedData.firstName} ${updatedData.lastName}`,
+          email: updatedData.email,
+          role: updatedData.role as UserRole,
+          profileUrl: '',
+          dateJoined: new Date().toISOString(),
+        })
+      );
+    }
+  };
 
   // Profile form state
   const [profileForm, setProfileForm] = useState<UpdateUserRequest>({
@@ -60,10 +87,15 @@ const UserProfile = () => {
       return;
     }
 
-    updateProfileMutation.mutate({
-      userId,
-      data: profileForm,
-    });
+    updateProfileMutation.mutate(
+      {
+        userId,
+        data: profileForm,
+      },
+      {
+        onSuccess: handleProfileUpdateSuccess,
+      }
+    );
   };
 
   if (isLoadingProfile) {

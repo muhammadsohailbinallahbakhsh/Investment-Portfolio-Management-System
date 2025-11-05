@@ -348,6 +348,7 @@ const AddTransaction = () => {
                     Investment <span className='text-red-500'>*</span>
                   </Label>
                   <Select
+                    key={`investmentId-${formData.investmentId}`}
                     value={formData.investmentId?.toString() || ''}
                     onValueChange={(value) =>
                       handleSelectChange('investmentId', value)
@@ -415,6 +416,7 @@ const AddTransaction = () => {
                       Transaction Type <span className='text-red-500'>*</span>
                     </Label>
                     <Select
+                      key={`type-${formData.type}`}
                       value={formData.type}
                       onValueChange={(value) =>
                         handleSelectChange('type', value)

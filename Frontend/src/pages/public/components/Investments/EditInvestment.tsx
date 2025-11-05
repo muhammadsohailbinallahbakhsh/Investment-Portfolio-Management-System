@@ -307,6 +307,7 @@ const EditInvestment = () => {
                   Type <span className='text-red-500'>*</span>
                 </Label>
                 <Select
+                  key={`type-${formData.type}`}
                   value={formData.type}
                   onValueChange={(value) => handleSelectChange('type', value)}
                 >
@@ -336,6 +337,7 @@ const EditInvestment = () => {
                   Status <span className='text-red-500'>*</span>
                 </Label>
                 <Select
+                  key={`status-${formData.status}`}
                   value={formData.status}
                   onValueChange={(value) => handleSelectChange('status', value)}
                 >
