@@ -31,6 +31,7 @@ export const ExportMenu = ({
     setIsExporting(true);
     try {
       await exportReport(data, reportType, format);
+      console.log(`Exported ${reportName} as ${format.toUpperCase()}`);
     } catch (error) {
       console.error('Export failed:', error);
     } finally {

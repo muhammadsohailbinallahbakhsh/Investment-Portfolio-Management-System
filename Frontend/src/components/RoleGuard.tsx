@@ -1,22 +1,22 @@
-import React from 'react';
+import type { ReactNode } from 'react';
 import { useRole } from '@/hooks';
-import { UserRole } from '@/types';
+import type { UserRole } from '@/types';
 
-interface RoleGuardProps {
-  children: React.ReactNode;
+type RoleGuardProps = {
+  children: ReactNode;
   allowedRoles: UserRole[];
-  fallback?: React.ReactNode;
-}
+  fallback?: ReactNode;
+};
 
 /**
  * RoleGuard component to conditionally render content based on user roles
  * Use this for UI elements that should only be visible to certain roles
  */
-export const RoleGuard: React.FC<RoleGuardProps> = ({
+export function RoleGuard({
   children,
   allowedRoles,
   fallback = null,
-}) => {
+}: RoleGuardProps) {
   const { hasRole } = useRole();
 
   if (!hasRole(allowedRoles)) {
@@ -24,4 +24,4 @@ export const RoleGuard: React.FC<RoleGuardProps> = ({
   }
 
   return <>{children}</>;
-};
+}

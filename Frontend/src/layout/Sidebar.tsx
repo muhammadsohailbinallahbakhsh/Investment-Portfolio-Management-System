@@ -27,7 +27,8 @@ const Sidebar = ({ role, onNavigate }: SidebarPropsType) => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
-  
+  console.log('Sidebar rendering with role:', role);
+  console.log('Using navLinks:', navLinks);
 
   const handleLogout = () => {
     // Clear auth context
