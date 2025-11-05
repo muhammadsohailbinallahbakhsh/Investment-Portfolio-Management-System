@@ -205,20 +205,7 @@ const UserLogin = () => {
               )}
             </div>
 
-            <div className='flex items-center justify-between'>
-              <div className='flex items-center space-x-2'>
-                <input
-                  type='checkbox'
-                  id='remember'
-                  className='w-4 h-4 rounded border-gray-300'
-                />
-                <Label
-                  htmlFor='remember'
-                  className='p-14-regular text-gray-700 cursor-pointer'
-                >
-                  Remember me
-                </Label>
-              </div>
+            <div className='flex items-center justify-end'>
               <Link
                 to='/auth/forgot-password'
                 className='p-14-medium text-primary-100 hover:text-primary-500'

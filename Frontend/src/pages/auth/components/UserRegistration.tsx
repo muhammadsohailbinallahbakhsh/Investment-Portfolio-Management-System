@@ -323,16 +323,16 @@ const UserRegistration = () => {
             </div>
 
             {/* Terms and Conditions */}
-            <div className='flex items-start space-x-2 pt-2'>
+            <div className='flex items-center space-x-2 pt-2'>
               <input
                 type='checkbox'
                 id='terms'
-                className='w-4 h-4 mt-1 rounded border-gray-300'
+                className='w-4 h-4 rounded border-gray-300 shrink-0'
                 required
               />
               <Label
                 htmlFor='terms'
-                className='p-14-regular text-gray-700 cursor-pointer'
+                className='p-14-regular text-gray-700 cursor-pointer text-left'
               >
                 I agree to the{' '}
                 <Link to='/terms' className='text-primary-100 hover:underline'>
